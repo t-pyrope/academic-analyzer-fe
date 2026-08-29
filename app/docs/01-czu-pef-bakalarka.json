@@ -1,0 +1,706 @@
+{
+  "schema_version": "1.0",
+  "year": 2019,
+  "profile_id": "czu.pef.bakalarka",
+  "institution": {
+    "university": "Česká zemědělská univerzita v Praze",
+    "faculty": "Provozně ekonomická fakulta",
+    "work_type": "bakalářská práce"
+  },
+  "source_document": {
+    "filename": "czu-pef-bakalarka(1).pdf",
+    "version": "provided_document",
+    "notes": [
+      "Rules are derived only from the supplied PEF methodological document.",
+      "Where the document uses recommendations rather than mandatory wording, the rule severity is recommendation or warning."
+    ]
+  },
+  "rules": [
+    {
+      "id": "assignment.study_program_alignment",
+      "definition": "assignment.alignment",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": false,
+      "parameters": {
+        "check": [
+          "study_program",
+          "department_profile",
+          "topic"
+        ]
+      }
+    },
+    {
+      "id": "title.specificity",
+      "definition": "content.section_requirements",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": false,
+      "parameters": {
+        "section": "title",
+        "requirements": [
+          "specific",
+          "concrete",
+          "distinctive",
+          "scope_or_context_identifiable"
+        ]
+      }
+    },
+    {
+      "id": "structure.required_sections",
+      "definition": "structure.required_sections",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "sections": [
+          "title_page",
+          "assignment",
+          "declaration",
+          "abstract_cs",
+          "keywords_cs",
+          "abstract_en",
+          "keywords_en",
+          "table_of_contents",
+          "introduction",
+          "goal_and_methodology",
+          "theoretical_part",
+          "practical_part",
+          "results_evaluation",
+          "conclusion",
+          "references"
+        ],
+        "optional_sections": [
+          "acknowledgements",
+          "appendices",
+          "list_of_figures",
+          "list_of_tables",
+          "list_of_graphs",
+          "list_of_abbreviations"
+        ]
+      }
+    },
+    {
+      "id": "structure.section_order",
+      "definition": "structure.section_order",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "ordered_sections": [
+          "title_page",
+          "assignment",
+          "declaration",
+          "acknowledgements",
+          "abstract_keywords",
+          "table_of_contents",
+          "introduction",
+          "goal_and_methodology",
+          "theoretical_part",
+          "practical_part",
+          "results_evaluation",
+          "conclusion",
+          "references",
+          "lists",
+          "appendices"
+        ]
+      }
+    },
+    {
+      "id": "structure.allowed_chapter_variants",
+      "definition": "structure.section_naming",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {
+        "allowed_names_by_position": {
+          "3": [
+            "Teoretická část práce",
+            "Teoretická východiska",
+            "Současný stav poznání řešené problematiky"
+          ],
+          "4": [
+            "Praktická část práce",
+            "Vlastní práce",
+            "Analytická část práce"
+          ],
+          "5": [
+            "Zhodnocení výsledků",
+            "Zhodnocení a doporučení",
+            "Výsledky a diskuse"
+          ]
+        },
+        "exactly_one_variant_per_position": true
+      }
+    },
+    {
+      "id": "structure.heading_depth",
+      "definition": "structure.section_depth",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {
+        "max_level": 3,
+        "minimum_subsections_when_divided": 2
+      }
+    },
+    {
+      "id": "structure.chapter_starts_new_page",
+      "definition": "structure.chapter_starts_new_page",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {}
+    },
+    {
+      "id": "format.page_size",
+      "definition": "format.page_size",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "allowed": [
+          "A4"
+        ]
+      }
+    },
+    {
+      "id": "format.margins",
+      "definition": "format.margins",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "top_mm": 30,
+        "inner_mm": 35,
+        "bottom_mm": 25,
+        "outer_mm": 20,
+        "double_sided_mirror_margins": true
+      }
+    },
+    {
+      "id": "format.font",
+      "definition": "format.font",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "allowed_fonts": [
+          "Times New Roman"
+        ]
+      }
+    },
+    {
+      "id": "format.font_size",
+      "definition": "format.font_size",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "target_pt": 12
+      }
+    },
+    {
+      "id": "format.line_spacing",
+      "definition": "format.line_spacing",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "allowed_values": [
+          1.5
+        ]
+      }
+    },
+    {
+      "id": "format.printing",
+      "definition": "format.page_size",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": true,
+      "parameters": {
+        "paper": "A4",
+        "preferred": "double_sided",
+        "single_sided_allowed": true
+      }
+    },
+    {
+      "id": "length.main_text",
+      "definition": "length.main_text",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {
+        "metric": "pages",
+        "min": 30,
+        "recommended_max": 40,
+        "scope": "introduction_to_conclusion"
+      }
+    },
+    {
+      "id": "pagination.numbering_start",
+      "definition": "format.page_numbering",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "numbering_starts_at": "first_numbered_text_page",
+        "first_numbered_page_number": 3,
+        "front_matter_counted_but_not_numbered": [
+          "title_page",
+          "assignment",
+          "declaration",
+          "acknowledgements"
+        ]
+      }
+    },
+    {
+      "id": "frontmatter.title_page",
+      "definition": "structure.required_sections",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "required_elements": [
+          "university",
+          "faculty",
+          "department",
+          "university_logo",
+          "work_type",
+          "work_title",
+          "author_name_without_titles",
+          "copyright_year"
+        ],
+        "logo_required": false
+      }
+    },
+    {
+      "id": "frontmatter.assignment",
+      "definition": "structure.required_sections",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "required": true,
+        "must_be_in": [
+          "printed_version",
+          "electronic_version"
+        ]
+      }
+    },
+    {
+      "id": "frontmatter.declaration",
+      "definition": "declaration.required_content",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": false,
+      "parameters": {
+        "required_elements": [
+          "independent_work_declaration",
+          "citation_declaration",
+          "date",
+          "signature"
+        ]
+      }
+    },
+    {
+      "id": "abstract.languages",
+      "definition": "section.abstract.languages",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "languages": [
+          "cs",
+          "en"
+        ]
+      }
+    },
+    {
+      "id": "abstract.length",
+      "definition": "section.abstract.length",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {
+        "metric": "lines",
+        "max": 15
+      }
+    },
+    {
+      "id": "abstract.content",
+      "definition": "section.abstract.required_content",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": false,
+      "parameters": {
+        "required_elements": [
+          "summary"
+        ],
+        "forbidden": [
+          "unsupported_detail"
+        ]
+      }
+    },
+    {
+      "id": "keywords.count",
+      "definition": "keywords.count",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "min": 7,
+        "max": 10
+      }
+    },
+    {
+      "id": "keywords.title_overlap",
+      "definition": "keywords.title_overlap",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": false,
+      "parameters": {
+        "allowed_overlap": false
+      }
+    },
+    {
+      "id": "content.goal_quality",
+      "definition": "content.section_requirements",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": false,
+      "parameters": {
+        "section": "goal",
+        "requirements": [
+          "unambiguous",
+          "achievable",
+          "verifiable",
+          "not_a_method",
+          "main_goal_with_optional_subgoals"
+        ]
+      }
+    },
+    {
+      "id": "content.goal_time",
+      "definition": "language.writing_style",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": false,
+      "parameters": {
+        "section": "goal",
+        "allowed_tenses": [
+          "present"
+        ]
+      }
+    },
+    {
+      "id": "content.methodology_time",
+      "definition": "language.writing_style",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": false,
+      "parameters": {
+        "section": "methodology",
+        "allowed_tenses": [
+          "present",
+          "past"
+        ]
+      }
+    },
+    {
+      "id": "language.person_and_voice",
+      "definition": "language.writing_style",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": false,
+      "parameters": {
+        "forbidden_person": [
+          "first_singular",
+          "first_plural"
+        ],
+        "required_person": [
+          "third_singular",
+          "third_plural"
+        ],
+        "required_voice": [
+          "passive"
+        ]
+      }
+    },
+    {
+      "id": "references.minimum_books_in_assignment",
+      "definition": "references.count",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "scope": "assignment",
+        "source_type": "book",
+        "min": 5
+      }
+    },
+    {
+      "id": "references.source_quality",
+      "definition": "references.source_quality",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": false,
+      "parameters": {
+        "avoid": [
+          "scripts",
+          "sources_without_identifiable_author",
+          "non_expert_authors"
+        ],
+        "prefer": [
+          "expert_sources",
+          "recent_sources",
+          "sources_recommended_in_assignment"
+        ],
+        "historical_sources_allowed_when_contextually_justified": true
+      }
+    },
+    {
+      "id": "references.recency",
+      "definition": "references.source_quality",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": true,
+      "parameters": {
+        "preferred_max_age_years": 10,
+        "exceptions": [
+          "historical_context",
+          "topic_specific_justification"
+        ]
+      }
+    },
+    {
+      "id": "citations.style",
+      "definition": "citations.style",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "standard": "CSN ISO 690:2011",
+        "recommended_in_text_system": "Harvard author-date"
+      }
+    },
+    {
+      "id": "citations.reference_linking",
+      "definition": "citations.reference_linking",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "every_citation_in_reference_list": true,
+        "every_reference_cited": true
+      }
+    },
+    {
+      "id": "citations.paraphrase_preference",
+      "definition": "citations.direct_quote",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": false,
+      "parameters": {
+        "preferred": "paraphrase",
+        "direct_quote_requires": [
+          "quotation_marks",
+          "citation"
+        ],
+        "direct_quote_style": "italic"
+      }
+    },
+    {
+      "id": "references.order",
+      "definition": "references.order",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {
+        "allowed": [
+          "alphabetical_by_author",
+          "numeric_by_first_use"
+        ],
+        "must_be_consistent": true
+      }
+    },
+    {
+      "id": "visuals.requirement",
+      "definition": "visuals.presence",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "object_types": [
+          "figure",
+          "table",
+          "graph",
+          "other_object"
+        ],
+        "rule": "only_when_used"
+      }
+    },
+    {
+      "id": "visuals.numbering",
+      "definition": "visuals.numbering",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "separate_sequences": true,
+        "scope": "whole_work"
+      }
+    },
+    {
+      "id": "visuals.caption",
+      "definition": "visuals.caption",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "required": true,
+        "caption_font": "Times New Roman",
+        "caption_size_pt": 12,
+        "position": "either"
+      }
+    },
+    {
+      "id": "visuals.source",
+      "definition": "visuals.source",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "required": true,
+        "position": "below_object",
+        "source_style": "same_as_in_text_citation"
+      }
+    },
+    {
+      "id": "visuals.text_reference",
+      "definition": "visuals.text_reference",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": false,
+      "parameters": {
+        "required": true,
+        "should_be_close_to_object": true
+      }
+    },
+    {
+      "id": "visuals.alignment",
+      "definition": "format.alignment",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": true,
+      "parameters": {
+        "objects": [
+          "figures",
+          "tables",
+          "equations"
+        ],
+        "alignment": "center"
+      }
+    },
+    {
+      "id": "content.theory_practice_link",
+      "definition": "content.goal_alignment",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": false,
+      "parameters": {
+        "check": [
+          "theoretical_part_supports_practical_part",
+          "goal_is_reflected_in_both_parts",
+          "logical_continuity"
+        ]
+      }
+    },
+    {
+      "id": "content.results_conclusion_alignment",
+      "definition": "content.goal_alignment",
+      "enabled": true,
+      "severity": "warning",
+      "deterministic": false,
+      "parameters": {
+        "check": [
+          "goals_addressed",
+          "results_support_conclusion",
+          "conclusions_are_specific"
+        ]
+      }
+    },
+    {
+      "id": "language.academic_style",
+      "definition": "language.writing_style",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": false,
+      "parameters": {
+        "requirements": [
+          "professional_academic_language",
+          "clarity",
+          "precise_formulations",
+          "no_first_person"
+        ]
+      }
+    },
+    {
+      "id": "integrity.similarity",
+      "definition": "academic_integrity.plagiarism_similarity",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "uncited_similarity_plagiarism_above_percent": 10,
+        "cited_compilation_plagiarism_above_percent": 20,
+        "self_similarity_allowed_up_to_percent": 40,
+        "supervisor_comment_required_at_or_above_percent": 15,
+        "uncited_references_noncompliance_above_percent": 10,
+        "decision_authority": "state_final_exam_commission"
+      }
+    },
+    {
+      "id": "integrity.electronic_printed_identity",
+      "definition": "declaration.required_content",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "electronic_and_printed_versions_identical": true
+      }
+    },
+    {
+      "id": "submission.assignment_and_upload",
+      "definition": "structure.required_sections",
+      "enabled": true,
+      "severity": "error",
+      "deterministic": true,
+      "parameters": {
+        "electronic_submission_required": true,
+        "printed_and_electronic_identity_required": true
+      }
+    },
+    {
+      "id": "evaluation.coverage",
+      "definition": "content.section_requirements",
+      "enabled": true,
+      "severity": "recommendation",
+      "deterministic": false,
+      "parameters": {
+        "criteria": [
+          "goal_and_methodology",
+          "data_and_information",
+          "overall_solution",
+          "structure",
+          "academic_literature_and_citations",
+          "language",
+          "precision",
+          "formal_quality",
+          "goal_completion_and_conclusions",
+          "abstract_and_keywords_content_match"
+        ]
+      }
+    }
+  ]
+}

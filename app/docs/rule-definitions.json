@@ -1,0 +1,483 @@
+{
+  "schema_version": "1.0",
+
+  "rule_definitions": [
+
+    {
+      "id": "structure.required_sections",
+      "category": "structure",
+      "name": "Required sections",
+      "description": "Checks that required sections exist.",
+      "engine": "section_presence",
+      "parameters": {
+        "sections": "array"
+      }
+    },
+
+    {
+      "id": "structure.section_order",
+      "category": "structure",
+      "name": "Section order",
+      "description": "Checks whether required sections appear in the prescribed order.",
+      "engine": "section_order",
+      "parameters": {
+        "ordered_sections": "array"
+      }
+    },
+
+    {
+      "id": "structure.section_naming",
+      "category": "structure",
+      "name": "Section naming",
+      "description": "Checks whether chapter names match or belong to an allowed set.",
+      "engine": "section_name_match",
+      "parameters": {
+        "allowed_names": "array"
+      }
+    },
+
+    {
+      "id": "structure.section_depth",
+      "category": "structure",
+      "name": "Maximum heading depth",
+      "engine": "heading_depth",
+      "parameters": {
+        "max_level": "integer"
+      }
+    },
+
+    {
+      "id": "structure.chapter_starts_new_page",
+      "category": "structure",
+      "name": "Chapter page breaks",
+      "engine": "heading_page_break",
+      "parameters": {}
+    },
+
+    {
+      "id": "length.main_text",
+      "category": "length",
+      "name": "Main text length",
+      "engine": "numeric_range",
+      "parameters": {
+        "metric": "norm_pages | characters | words | pages",
+        "min": "number|null",
+        "max": "number|null",
+        "exclude_sections": "array"
+      }
+    },
+
+    {
+      "id": "length.norm_page_definition",
+      "category": "length",
+      "name": "Norm page definition",
+      "engine": "derived_metric",
+      "parameters": {
+        "characters_per_page": "integer"
+      }
+    },
+
+    {
+      "id": "section.abstract.presence",
+      "category": "abstract",
+      "name": "Abstract presence",
+      "engine": "section_presence",
+      "parameters": {}
+    },
+
+    {
+      "id": "section.abstract.languages",
+      "category": "abstract",
+      "name": "Abstract languages",
+      "engine": "language_presence",
+      "parameters": {
+        "languages": "array"
+      }
+    },
+
+    {
+      "id": "section.abstract.length",
+      "category": "abstract",
+      "name": "Abstract length",
+      "engine": "numeric_range",
+      "parameters": {
+        "metric": "words | characters | pages",
+        "min": "number|null",
+        "max": "number|null"
+      }
+    },
+
+    {
+      "id": "section.abstract.required_content",
+      "category": "abstract",
+      "name": "Abstract content",
+      "engine": "semantic_content_check",
+      "parameters": {
+        "required_elements": [
+          "aim",
+          "methods",
+          "results",
+          "conclusion",
+          "contribution"
+        ]
+      }
+    },
+
+    {
+      "id": "keywords.count",
+      "category": "keywords",
+      "name": "Keyword count",
+      "engine": "count_range",
+      "parameters": {
+        "min": "number|null",
+        "max": "number|null"
+      }
+    },
+
+    {
+      "id": "keywords.title_overlap",
+      "category": "keywords",
+      "name": "Keyword overlap with title",
+      "engine": "text_similarity",
+      "parameters": {
+        "allowed_overlap": "boolean"
+      }
+    },
+
+    {
+      "id": "format.font",
+      "category": "formatting",
+      "name": "Font",
+      "engine": "document_format",
+      "parameters": {
+        "allowed_fonts": "array"
+      }
+    },
+
+    {
+      "id": "format.font_size",
+      "category": "formatting",
+      "name": "Font size",
+      "engine": "document_format",
+      "parameters": {
+        "target": "number",
+        "tolerance": "number"
+      }
+    },
+
+    {
+      "id": "format.line_spacing",
+      "category": "formatting",
+      "name": "Line spacing",
+      "engine": "document_format",
+      "parameters": {
+        "allowed_values": "array"
+      }
+    },
+
+    {
+      "id": "format.margins",
+      "category": "formatting",
+      "name": "Page margins",
+      "engine": "document_format",
+      "parameters": {
+        "top_cm": "range",
+        "bottom_cm": "range",
+        "left_cm": "range",
+        "right_cm": "range"
+      }
+    },
+
+    {
+      "id": "format.page_size",
+      "category": "formatting",
+      "name": "Page size",
+      "engine": "document_format",
+      "parameters": {
+        "allowed": "array"
+      }
+    },
+
+    {
+      "id": "format.alignment",
+      "category": "formatting",
+      "name": "Text alignment",
+      "engine": "document_format",
+      "parameters": {}
+    },
+
+    {
+      "id": "format.page_numbering",
+      "category": "formatting",
+      "name": "Page numbering",
+      "engine": "page_numbering",
+      "parameters": {}
+    },
+
+    {
+      "id": "language.required",
+      "category": "language",
+      "name": "Document language",
+      "engine": "language_detection",
+      "parameters": {
+        "allowed_languages": "array"
+      }
+    },
+
+    {
+      "id": "language.writing_style",
+      "category": "language",
+      "name": "Required writing style",
+      "engine": "linguistic_analysis",
+      "parameters": {
+        "allowed_voice": "array",
+        "allowed_tenses": "array"
+      }
+    },
+
+    {
+      "id": "citations.style",
+      "category": "citations",
+      "name": "Citation style",
+      "engine": "citation_style_detection",
+      "parameters": {
+        "allowed_styles": "array"
+      }
+    },
+
+    {
+      "id": "citations.consistency",
+      "category": "citations",
+      "name": "Citation consistency",
+      "engine": "citation_consistency",
+      "parameters": {
+        "single_style_required": "boolean"
+      }
+    },
+
+    {
+      "id": "citations.reference_linking",
+      "category": "citations",
+      "name": "Citation-reference linking",
+      "engine": "reference_integrity",
+      "parameters": {
+        "every_citation_in_reference_list": "boolean",
+        "every_reference_cited": "boolean"
+      }
+    },
+
+    {
+      "id": "citations.direct_quote",
+      "category": "citations",
+      "name": "Direct quotation formatting",
+      "engine": "quote_detection",
+      "parameters": {
+        "max_inline_words": "number|null",
+        "requires_page": "boolean"
+      }
+    },
+
+    {
+      "id": "references.count",
+      "category": "references",
+      "name": "Number of references",
+      "engine": "count_range",
+      "parameters": {
+        "min": "number|null",
+        "max": "number|null"
+      }
+    },
+
+    {
+      "id": "references.foreign_ratio",
+      "category": "references",
+      "name": "Foreign-language source ratio",
+      "engine": "reference_language_ratio",
+      "parameters": {
+        "min_ratio": "number"
+      }
+    },
+
+    {
+      "id": "references.source_quality",
+      "category": "references",
+      "name": "Reference source quality",
+      "engine": "semantic_source_classification",
+      "parameters": {
+        "allowed_source_types": "array",
+        "preferred_source_types": "array"
+      }
+    },
+
+    {
+      "id": "references.order",
+      "category": "references",
+      "name": "Reference ordering",
+      "engine": "reference_order",
+      "parameters": {
+        "order": "alphabetical | chronological | citation_order"
+      }
+    },
+
+    {
+      "id": "visuals.presence",
+      "category": "visuals",
+      "name": "Required visual elements",
+      "engine": "object_presence",
+      "parameters": {
+        "object_types": "array"
+      }
+    },
+
+    {
+      "id": "visuals.numbering",
+      "category": "visuals",
+      "name": "Visual numbering",
+      "engine": "object_numbering",
+      "parameters": {
+        "separate_sequences": "boolean"
+      }
+    },
+
+    {
+      "id": "visuals.caption",
+      "category": "visuals",
+      "name": "Visual captions",
+      "engine": "caption_check",
+      "parameters": {
+        "required": "boolean",
+        "position": "above | below | either"
+      }
+    },
+
+    {
+      "id": "visuals.text_reference",
+      "category": "visuals",
+      "name": "Reference to visual in text",
+      "engine": "cross_reference_check",
+      "parameters": {
+        "required": "boolean"
+      }
+    },
+
+    {
+      "id": "visuals.source",
+      "category": "visuals",
+      "name": "Visual source attribution",
+      "engine": "source_attribution",
+      "parameters": {
+        "required_for_external_objects": "boolean"
+      }
+    },
+
+    {
+      "id": "content.section_requirements",
+      "category": "content",
+      "name": "Section semantic requirements",
+      "engine": "semantic_section_check",
+      "parameters": {
+        "section": "string",
+        "requirements": "array"
+      }
+    },
+
+    {
+      "id": "content.goal_alignment",
+      "category": "content",
+      "name": "Goals addressed",
+      "engine": "goal_coverage",
+      "parameters": {}
+    },
+
+    {
+      "id": "content.methodology_completeness",
+      "category": "content",
+      "name": "Methodology completeness",
+      "engine": "semantic_content_check",
+      "parameters": {
+        "required_elements": "array"
+      }
+    },
+
+    {
+      "id": "content.results_discussion_separation",
+      "category": "content",
+      "name": "Results/discussion separation",
+      "engine": "section_content_classification",
+      "parameters": {}
+    },
+
+    {
+      "id": "content.conclusion_requirements",
+      "category": "content",
+      "name": "Conclusion requirements",
+      "engine": "semantic_content_check",
+      "parameters": {
+        "required_elements": "array"
+      }
+    },
+
+    {
+      "id": "academic_integrity.plagiarism_similarity",
+      "category": "academic_integrity",
+      "name": "Text similarity threshold",
+      "engine": "similarity_threshold",
+      "parameters": {
+        "thresholds": "array"
+      }
+    },
+
+    {
+      "id": "academic_integrity.uncited_sources",
+      "category": "academic_integrity",
+      "name": "Uncited references",
+      "engine": "reference_integrity",
+      "parameters": {}
+    },
+
+    {
+      "id": "ai.usage_policy",
+      "category": "academic_integrity",
+      "name": "AI usage policy",
+      "engine": "policy_semantic_check",
+      "parameters": {
+        "allowed_uses": "array",
+        "forbidden_uses": "array",
+        "disclosure_required": "boolean"
+      }
+    },
+
+    {
+      "id": "declaration.presence",
+      "category": "administrative",
+      "name": "Author declaration",
+      "engine": "section_presence",
+      "parameters": {}
+    },
+
+    {
+      "id": "declaration.required_content",
+      "category": "administrative",
+      "name": "Declaration content",
+      "engine": "semantic_content_check",
+      "parameters": {
+        "required_elements": "array"
+      }
+    },
+
+    {
+      "id": "assignment.alignment",
+      "category": "assignment",
+      "name": "Alignment with assignment",
+      "engine": "semantic_alignment",
+      "parameters": {
+        "check": [
+          "title",
+          "goals",
+          "methodology",
+          "scope"
+        ]
+      }
+    }
+  ]
+}
