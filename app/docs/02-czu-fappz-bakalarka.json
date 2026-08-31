@@ -5,7 +5,7 @@
     "university": "Česká zemědělská univerzita v Praze",
     "faculty": "Fakulta agrobiologie, potravinových a přírodních zdrojů",
     "faculty_code": "FAPPZ",
-    "work_type": "bachelor_thesis"
+    "work_type": "bakalářská práce"
   },
   "year": 2021,
   "source_document": {
@@ -13,7 +13,7 @@
   },
   "rules": [
     {
-      "rule_id": "assignment.study_program_alignment",
+      "id": "assignment.study_program_alignment",
       "definition": "assignment.alignment",
       "severity": "error",
       "parameters": {
@@ -24,7 +24,7 @@
       }
     },
     {
-      "rule_id": "frontmatter.title_page",
+      "id": "frontmatter.title_page",
       "definition": "structure.required_sections",
       "severity": "error",
       "parameters": {
@@ -40,7 +40,7 @@
       }
     },
     {
-      "rule_id": "frontmatter.declaration",
+      "id": "frontmatter.declaration",
       "definition": "declaration.required_content",
       "severity": "error",
       "parameters": {
@@ -52,7 +52,7 @@
       }
     },
     {
-      "rule_id": "frontmatter.acknowledgements",
+      "id": "frontmatter.acknowledgements",
       "definition": "structure.required_sections",
       "severity": "warning",
       "parameters": {
@@ -60,7 +60,7 @@
       }
     },
     {
-      "rule_id": "abstract.bilingual",
+      "id": "abstract.bilingual",
       "definition": "section.abstract.languages",
       "severity": "error",
       "parameters": {
@@ -71,7 +71,7 @@
       }
     },
     {
-      "rule_id": "keywords.count",
+      "id": "keywords.count",
       "definition": "keywords.count",
       "severity": "warning",
       "parameters": {
@@ -80,7 +80,7 @@
       }
     },
     {
-      "rule_id": "keywords.title_overlap",
+      "id": "keywords.title_overlap",
       "definition": "keywords.title_overlap",
       "severity": "recommendation",
       "parameters": {
@@ -88,7 +88,7 @@
       }
     },
     {
-      "rule_id": "structure.compilation",
+      "id": "structure.compilation",
       "definition": "structure.required_sections",
       "severity": "error",
       "parameters": {
@@ -102,7 +102,7 @@
       }
     },
     {
-      "rule_id": "structure.scientific",
+      "id": "structure.scientific",
       "definition": "structure.required_sections",
       "severity": "error",
       "parameters": {
@@ -119,7 +119,7 @@
       }
     },
     {
-      "rule_id": "structure.project",
+      "id": "structure.project",
       "definition": "structure.required_sections",
       "severity": "error",
       "parameters": {
@@ -139,7 +139,7 @@
       }
     },
     {
-      "rule_id": "structure.lists_optional",
+      "id": "structure.lists_optional",
       "definition": "structure.required_sections",
       "severity": "warning",
       "parameters": {
@@ -152,7 +152,7 @@
       }
     },
     {
-      "rule_id": "format.font",
+      "id": "format.font",
       "definition": "format.font",
       "severity": "recommendation",
       "parameters": {
@@ -163,7 +163,7 @@
       }
     },
     {
-      "rule_id": "format.font_size",
+      "id": "format.font_size",
       "definition": "format.font_size",
       "severity": "recommendation",
       "parameters": {
@@ -171,7 +171,7 @@
       }
     },
     {
-      "rule_id": "format.line_spacing",
+      "id": "format.line_spacing",
       "definition": "format.line_spacing",
       "severity": "recommendation",
       "parameters": {
@@ -181,7 +181,7 @@
       }
     },
     {
-      "rule_id": "format.margins",
+      "id": "format.margins",
       "definition": "format.margins",
       "severity": "recommendation",
       "parameters": {
@@ -192,7 +192,7 @@
       }
     },
     {
-      "rule_id": "format.printing",
+      "id": "format.printing",
       "definition": "format.page_size",
       "severity": "recommendation",
       "parameters": {
@@ -204,7 +204,7 @@
       }
     },
     {
-      "rule_id": "content.language",
+      "id": "content.language",
       "definition": "language.required",
       "severity": "warning",
       "parameters": {
@@ -213,7 +213,7 @@
       }
     },
     {
-      "rule_id": "language.czech_conventions",
+      "id": "language.czech_conventions",
       "definition": "language.writing_style",
       "severity": "recommendation",
       "parameters": {
@@ -226,7 +226,7 @@
       }
     },
     {
-      "rule_id": "citations.style",
+      "id": "citations.style",
       "definition": "citations.style",
       "severity": "error",
       "parameters": {
@@ -238,7 +238,7 @@
       }
     },
     {
-      "rule_id": "citations.reference_linking",
+      "id": "citations.reference_linking",
       "definition": "citations.reference_linking",
       "severity": "error",
       "parameters": {
@@ -247,7 +247,7 @@
       }
     },
     {
-      "rule_id": "references.minimum",
+      "id": "references.minimum",
       "definition": "references.count",
       "severity": "error",
       "parameters": {
@@ -256,7 +256,7 @@
       }
     },
     {
-      "rule_id": "references.foreign_ratio",
+      "id": "references.foreign_ratio",
       "definition": "references.foreign_ratio",
       "severity": "error",
       "parameters": {
@@ -264,7 +264,7 @@
       }
     },
     {
-      "rule_id": "references.source_quality",
+      "id": "references.source_quality",
       "definition": "references.source_quality",
       "severity": "warning",
       "parameters": {
@@ -282,7 +282,7 @@
       }
     },
     {
-      "rule_id": "references.recency",
+      "id": "references.recency",
       "definition": "references.source_quality",
       "severity": "recommendation",
       "parameters": {
@@ -290,7 +290,7 @@
       }
     },
     {
-      "rule_id": "references.alphabetical_order",
+      "id": "references.alphabetical_order",
       "definition": "references.order",
       "severity": "error",
       "parameters": {
@@ -298,7 +298,7 @@
       }
     },
     {
-      "rule_id": "assignment.required_foreign_citations",
+      "id": "assignment.required_foreign_citations",
       "definition": "references.count",
       "severity": "error",
       "parameters": {
@@ -308,7 +308,7 @@
       }
     },
     {
-      "rule_id": "content.goal",
+      "id": "content.goal",
       "definition": "content.section_requirements",
       "severity": "warning",
       "parameters": {
@@ -322,7 +322,7 @@
       }
     },
     {
-      "rule_id": "content.methodology",
+      "id": "content.methodology",
       "definition": "content.methodology_completeness",
       "severity": "warning",
       "parameters": {
@@ -335,7 +335,7 @@
       }
     },
     {
-      "rule_id": "content.discussion_separate",
+      "id": "content.discussion_separate",
       "definition": "content.results_discussion_separation",
       "severity": "error",
       "parameters": {
@@ -343,7 +343,7 @@
       }
     },
     {
-      "rule_id": "content.discussion_economic_or_ecological",
+      "id": "content.discussion_economic_or_ecological",
       "definition": "content.section_requirements",
       "severity": "error",
       "parameters": {
@@ -355,7 +355,7 @@
       }
     },
     {
-      "rule_id": "content.conclusion",
+      "id": "content.conclusion",
       "definition": "content.conclusion_requirements",
       "severity": "warning",
       "parameters": {
@@ -372,7 +372,7 @@
       }
     },
     {
-      "rule_id": "visuals.reference",
+      "id": "visuals.reference",
       "definition": "visuals.text_reference",
       "severity": "error",
       "parameters": {
@@ -380,7 +380,7 @@
       }
     },
     {
-      "rule_id": "visuals.numbering",
+      "id": "visuals.numbering",
       "definition": "visuals.numbering",
       "severity": "error",
       "parameters": {
@@ -392,7 +392,7 @@
       }
     },
     {
-      "rule_id": "visuals.caption",
+      "id": "visuals.caption",
       "definition": "visuals.caption",
       "severity": "error",
       "parameters": {
@@ -400,7 +400,7 @@
       }
     },
     {
-      "rule_id": "visuals.source",
+      "id": "visuals.source",
       "definition": "visuals.source",
       "severity": "error",
       "parameters": {
@@ -409,7 +409,7 @@
       }
     },
     {
-      "rule_id": "appendices.pagination",
+      "id": "appendices.pagination",
       "definition": "format.page_numbering",
       "severity": "warning",
       "parameters": {
@@ -418,7 +418,7 @@
       }
     },
     {
-      "rule_id": "appendices.toc",
+      "id": "appendices.toc",
       "definition": "structure.section_presence",
       "severity": "warning",
       "parameters": {
@@ -426,7 +426,7 @@
       }
     },
     {
-      "rule_id": "integrity.declaration",
+      "id": "integrity.declaration",
       "definition": "declaration.required_content",
       "severity": "error",
       "parameters": {

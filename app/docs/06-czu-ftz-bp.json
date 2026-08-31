@@ -4,7 +4,8 @@
   "institution": {
     "university": "Česká zemědělská univerzita v Praze",
     "faculty": "Fakulta tropického zemědělství",
-    "faculty_code": "FTZ"
+    "faculty_code": "FTZ",
+    "work_type": "bakalářská práce"
   },
   "year": 2018,
   "source_document": {

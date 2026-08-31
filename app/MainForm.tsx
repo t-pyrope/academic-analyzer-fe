@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { ReferenceSelect } from "@/app/components/ReferenceSelect";
 
 type FormData = {
   university: string;
@@ -63,17 +64,7 @@ export default function MainForm() {
       sx={{ maxWidth: 640, width: "100%" }}
     >
       <Stack spacing={3}>
-        <TextField
-          {...register("university")}
-          select
-          fullWidth
-          label="University"
-          slotProps={{ select: { native: true } }}
-        >
-          <option value="ČZU">ČZU</option>
-          <option value="Univerzita Karlova">Univerzita Karlova</option>
-          <option value="ČVUT">ČVUT</option>
-        </TextField>
+        <ReferenceSelect />
 
         <Stack spacing={1.25}>
           <Typography

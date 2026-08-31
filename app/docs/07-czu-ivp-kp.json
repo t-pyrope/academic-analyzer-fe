@@ -3,12 +3,9 @@
   "profile_id": "czu.ivp.kvalifikacni_prace",
   "institution": {
     "university": "Česká zemědělská univerzita v Praze",
-    "institute": "Institut vzdělávání a poradenství",
-    "institute_code": "IVP",
-    "work_types": [
-      "bachelor_thesis",
-      "final_thesis"
-    ]
+    "faculty": "Institut vzdělávání a poradenství",
+    "faculty_code": "IVP",
+    "work_type": "závěrečná práce"
   },
   "year": 2024,
   "source_document": {

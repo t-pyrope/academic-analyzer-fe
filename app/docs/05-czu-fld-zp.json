@@ -5,10 +5,7 @@
     "university": "Česká zemědělská univerzita v Praze",
     "faculty": "Fakulta lesnická a dřevařská",
     "faculty_code": "FLD",
-    "work_types": [
-      "bachelor_thesis",
-      "master_thesis"
-    ]
+    "work_type": "závěrečná práce"
   },
   "year": 2025,
   "valid_from_academic_year": "2025/2026",

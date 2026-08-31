@@ -5,10 +5,7 @@
     "university": "Česká zemědělská univerzita v Praze",
     "faculty": "Technická fakulta",
     "faculty_code": "TF",
-    "work_types": [
-      "bachelor_thesis",
-      "master_thesis"
-    ]
+    "work_type": "závěrečná práce"
   },
   "year": 2025,
   "source_document": {

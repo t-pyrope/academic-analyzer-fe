@@ -1,482 +1,771 @@
 {
-  "schema_version": "1.0",
-
+  "schema_version": "2.0",
+  "description": "Universal catalog of academic-work rule definitions. Definitions describe available checks; faculty-specific JSON files configure their parameters.",
+  "categories": [
+    {
+      "id": "structure",
+      "name": "Struktura práce"
+    },
+    {
+      "id": "length",
+      "name": "Rozsah práce"
+    },
+    {
+      "id": "abstract",
+      "name": "Abstrakt"
+    },
+    {
+      "id": "keywords",
+      "name": "Klíčová slova"
+    },
+    {
+      "id": "formatting",
+      "name": "Formální úprava"
+    },
+    {
+      "id": "language",
+      "name": "Jazyk"
+    },
+    {
+      "id": "citations",
+      "name": "Citace"
+    },
+    {
+      "id": "references",
+      "name": "Zdroje a literatura"
+    },
+    {
+      "id": "visuals",
+      "name": "Tabulky a obrázky"
+    },
+    {
+      "id": "content",
+      "name": "Obsah práce"
+    },
+    {
+      "id": "academic_integrity",
+      "name": "Akademická integrita"
+    },
+    {
+      "id": "administrative",
+      "name": "Administrativní požadavky"
+    },
+    {
+      "id": "assignment",
+      "name": "Zadání práce"
+    }
+  ],
   "rule_definitions": [
-
     {
       "id": "structure.required_sections",
       "category": "structure",
-      "name": "Required sections",
-      "description": "Checks that required sections exist.",
+      "name": "Povinné části práce",
+      "description": "Kontroluje, zda práce obsahuje všechny požadované části.",
       "engine": "section_presence",
-      "parameters": {
-        "sections": "array"
+      "parameters_schema": {
+        "sections": {
+          "type": "array",
+          "label": "Povinné části",
+          "description": "Seznam částí, které musí práce obsahovat."
+        }
       }
     },
-
     {
       "id": "structure.section_order",
       "category": "structure",
-      "name": "Section order",
-      "description": "Checks whether required sections appear in the prescribed order.",
+      "name": "Pořadí částí práce",
+      "description": "Kontroluje, zda jsou části práce uvedeny v požadovaném pořadí.",
       "engine": "section_order",
-      "parameters": {
-        "ordered_sections": "array"
+      "parameters_schema": {
+        "ordered_sections": {
+          "type": "array",
+          "label": "Požadované pořadí",
+          "description": "Pořadí jednotlivých částí práce."
+        }
       }
     },
-
     {
       "id": "structure.section_naming",
       "category": "structure",
-      "name": "Section naming",
-      "description": "Checks whether chapter names match or belong to an allowed set.",
+      "name": "Názvy částí práce",
+      "description": "Kontroluje, zda názvy kapitol odpovídají povoleným názvům.",
       "engine": "section_name_match",
-      "parameters": {
-        "allowed_names": "array"
+      "parameters_schema": {
+        "allowed_names": {
+          "type": "array",
+          "label": "Povolené názvy",
+          "description": "Názvy nebo varianty názvů, které jsou přípustné."
+        }
       }
     },
-
     {
       "id": "structure.section_depth",
       "category": "structure",
-      "name": "Maximum heading depth",
+      "name": "Úroveň členění kapitol",
+      "description": "Kontroluje maximální hloubku členění nadpisů.",
       "engine": "heading_depth",
-      "parameters": {
-        "max_level": "integer"
+      "parameters_schema": {
+        "max_level": {
+          "type": "integer",
+          "label": "Maximální úroveň",
+          "description": "Nejvyšší povolená úroveň nadpisu."
+        }
       }
     },
-
     {
       "id": "structure.chapter_starts_new_page",
       "category": "structure",
-      "name": "Chapter page breaks",
+      "name": "Začátek kapitoly na nové stránce",
+      "description": "Kontroluje, zda hlavní kapitoly začínají na nové stránce.",
       "engine": "heading_page_break",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "length.main_text",
       "category": "length",
-      "name": "Main text length",
+      "name": "Rozsah hlavního textu",
+      "description": "Kontroluje, zda rozsah hlavního textu odpovídá stanovenému limitu.",
       "engine": "numeric_range",
-      "parameters": {
-        "metric": "norm_pages | characters | words | pages",
-        "min": "number|null",
-        "max": "number|null",
-        "exclude_sections": "array"
+      "parameters_schema": {
+        "metric": {
+          "type": "enum",
+          "label": "Jednotka",
+          "description": "Jednotka, ve které se rozsah posuzuje.",
+          "values": [
+            "norm_pages",
+            "characters",
+            "words",
+            "pages"
+          ]
+        },
+        "min": {
+          "type": "number",
+          "label": "Minimum",
+          "description": "Minimální požadovaný rozsah."
+        },
+        "max": {
+          "type": "number",
+          "label": "Maximum",
+          "description": "Maximální povolený rozsah."
+        },
+        "exclude_sections": {
+          "type": "array",
+          "label": "Vyloučené části",
+          "description": "Části, které se do rozsahu nezapočítávají."
+        }
       }
     },
-
     {
       "id": "length.norm_page_definition",
       "category": "length",
-      "name": "Norm page definition",
+      "name": "Definice normostrany",
+      "description": "Definuje počet znaků, který odpovídá jedné normostraně.",
       "engine": "derived_metric",
-      "parameters": {
-        "characters_per_page": "integer"
+      "parameters_schema": {
+        "characters_per_page": {
+          "type": "integer",
+          "label": "Znaků na normostranu",
+          "description": "Počet znaků včetně mezer na jednu normostranu."
+        }
       }
     },
-
     {
       "id": "section.abstract.presence",
       "category": "abstract",
-      "name": "Abstract presence",
+      "name": "Přítomnost abstraktu",
+      "description": "Kontroluje, zda práce obsahuje požadovaný abstrakt.",
       "engine": "section_presence",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "section.abstract.languages",
       "category": "abstract",
-      "name": "Abstract languages",
+      "name": "Jazyk abstraktu",
+      "description": "Kontroluje, zda je abstrakt uveden v požadovaných jazycích.",
       "engine": "language_presence",
-      "parameters": {
-        "languages": "array"
+      "parameters_schema": {
+        "languages": {
+          "type": "array",
+          "label": "Požadované jazyky",
+          "description": "Jazyky, ve kterých musí být abstrakt uveden."
+        }
       }
     },
-
     {
       "id": "section.abstract.length",
       "category": "abstract",
-      "name": "Abstract length",
+      "name": "Rozsah abstraktu",
+      "description": "Kontroluje délku abstraktu.",
       "engine": "numeric_range",
-      "parameters": {
-        "metric": "words | characters | pages",
-        "min": "number|null",
-        "max": "number|null"
+      "parameters_schema": {
+        "metric": {
+          "type": "enum",
+          "label": "Jednotka",
+          "description": "Jednotka pro měření délky.",
+          "values": [
+            "words",
+            "characters",
+            "pages"
+          ]
+        },
+        "min": {
+          "type": "number",
+          "label": "Minimum",
+          "description": "Minimální délka."
+        },
+        "max": {
+          "type": "number",
+          "label": "Maximum",
+          "description": "Maximální délka."
+        }
       }
     },
-
     {
       "id": "section.abstract.required_content",
       "category": "abstract",
-      "name": "Abstract content",
+      "name": "Obsah abstraktu",
+      "description": "Kontroluje, zda abstrakt obsahuje požadované informace.",
       "engine": "semantic_content_check",
-      "parameters": {
-        "required_elements": [
-          "aim",
-          "methods",
-          "results",
-          "conclusion",
-          "contribution"
-        ]
+      "parameters_schema": {
+        "required_elements": {
+          "type": "array",
+          "label": "Požadované informace",
+          "description": "Informace, které musí být v abstraktu obsaženy."
+        }
       }
     },
-
     {
       "id": "keywords.count",
       "category": "keywords",
-      "name": "Keyword count",
+      "name": "Počet klíčových slov",
+      "description": "Kontroluje počet klíčových slov.",
       "engine": "count_range",
-      "parameters": {
-        "min": "number|null",
-        "max": "number|null"
+      "parameters_schema": {
+        "min": {
+          "type": "number",
+          "label": "Minimum",
+          "description": "Minimální počet klíčových slov."
+        },
+        "max": {
+          "type": "number",
+          "label": "Maximum",
+          "description": "Maximální počet klíčových slov."
+        }
       }
     },
-
     {
       "id": "keywords.title_overlap",
       "category": "keywords",
-      "name": "Keyword overlap with title",
+      "name": "Klíčová slova a název práce",
+      "description": "Kontroluje vztah klíčových slov k názvu práce.",
       "engine": "text_similarity",
-      "parameters": {
-        "allowed_overlap": "boolean"
+      "parameters_schema": {
+        "allowed_overlap": {
+          "type": "boolean",
+          "label": "Povolit shodu s názvem",
+          "description": "Určuje, zda se klíčová slova mohou opakovat v názvu práce."
+        }
       }
     },
-
     {
       "id": "format.font",
       "category": "formatting",
-      "name": "Font",
+      "name": "Písmo",
+      "description": "Kontroluje použitý typ písma.",
       "engine": "document_format",
-      "parameters": {
-        "allowed_fonts": "array"
+      "parameters_schema": {
+        "allowed_fonts": {
+          "type": "array",
+          "label": "Povolená písma",
+          "description": "Písma povolená pro hlavní text."
+        }
       }
     },
-
     {
       "id": "format.font_size",
       "category": "formatting",
-      "name": "Font size",
+      "name": "Velikost písma",
+      "description": "Kontroluje velikost písma.",
       "engine": "document_format",
-      "parameters": {
-        "target": "number",
-        "tolerance": "number"
+      "parameters_schema": {
+        "target": {
+          "type": "number",
+          "label": "Požadovaná velikost",
+          "description": "Požadovaná velikost písma v bodech."
+        },
+        "tolerance": {
+          "type": "number",
+          "label": "Tolerance",
+          "description": "Přípustná odchylka od požadované velikosti."
+        }
       }
     },
-
     {
       "id": "format.line_spacing",
       "category": "formatting",
-      "name": "Line spacing",
+      "name": "Řádkování",
+      "description": "Kontroluje řádkování textu.",
       "engine": "document_format",
-      "parameters": {
-        "allowed_values": "array"
+      "parameters_schema": {
+        "allowed_values": {
+          "type": "array",
+          "label": "Povolené hodnoty",
+          "description": "Povolené hodnoty řádkování."
+        }
       }
     },
-
     {
       "id": "format.margins",
       "category": "formatting",
-      "name": "Page margins",
+      "name": "Okraje stránky",
+      "description": "Kontroluje nastavení okrajů stránky.",
       "engine": "document_format",
-      "parameters": {
-        "top_cm": "range",
-        "bottom_cm": "range",
-        "left_cm": "range",
-        "right_cm": "range"
+      "parameters_schema": {
+        "top_cm": {
+          "type": "range",
+          "label": "Horní okraj",
+          "description": "Povolený rozsah horního okraje v cm."
+        },
+        "bottom_cm": {
+          "type": "range",
+          "label": "Dolní okraj",
+          "description": "Povolený rozsah dolního okraje v cm."
+        },
+        "left_cm": {
+          "type": "range",
+          "label": "Levý okraj",
+          "description": "Povolený rozsah levého okraje v cm."
+        },
+        "right_cm": {
+          "type": "range",
+          "label": "Pravý okraj",
+          "description": "Povolený rozsah pravého okraje v cm."
+        }
       }
     },
-
     {
       "id": "format.page_size",
       "category": "formatting",
-      "name": "Page size",
+      "name": "Formát stránky",
+      "description": "Kontroluje formát papíru.",
       "engine": "document_format",
-      "parameters": {
-        "allowed": "array"
+      "parameters_schema": {
+        "allowed": {
+          "type": "array",
+          "label": "Povolené formáty",
+          "description": "Povolené formáty stránky, například A4."
+        }
       }
     },
-
     {
       "id": "format.alignment",
       "category": "formatting",
-      "name": "Text alignment",
+      "name": "Zarovnání textu",
+      "description": "Kontroluje zarovnání textu.",
       "engine": "document_format",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "format.page_numbering",
       "category": "formatting",
-      "name": "Page numbering",
+      "name": "Číslování stránek",
+      "description": "Kontroluje způsob číslování stránek.",
       "engine": "page_numbering",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "language.required",
       "category": "language",
-      "name": "Document language",
+      "name": "Jazyk práce",
+      "description": "Kontroluje, zda je práce napsána v požadovaném jazyce.",
       "engine": "language_detection",
-      "parameters": {
-        "allowed_languages": "array"
+      "parameters_schema": {
+        "allowed_languages": {
+          "type": "array",
+          "label": "Povolené jazyky",
+          "description": "Jazyky, ve kterých může být práce napsána."
+        }
       }
     },
-
     {
       "id": "language.writing_style",
       "category": "language",
-      "name": "Required writing style",
+      "name": "Akademický styl a gramatika",
+      "description": "Kontroluje jazykový styl práce podle stanovených požadavků.",
       "engine": "linguistic_analysis",
-      "parameters": {
-        "allowed_voice": "array",
-        "allowed_tenses": "array"
+      "parameters_schema": {
+        "allowed_voice": {
+          "type": "array",
+          "label": "Povolený způsob vyjadřování",
+          "description": "Povolené gramatické způsoby vyjadřování."
+        },
+        "allowed_tenses": {
+          "type": "array",
+          "label": "Povolené časy",
+          "description": "Časy požadované pro konkrétní části práce."
+        }
       }
     },
-
     {
       "id": "citations.style",
       "category": "citations",
-      "name": "Citation style",
+      "name": "Citační styl",
+      "description": "Kontroluje, zda práce používá požadovaný citační styl.",
       "engine": "citation_style_detection",
-      "parameters": {
-        "allowed_styles": "array"
+      "parameters_schema": {
+        "allowed_styles": {
+          "type": "array",
+          "label": "Povolené citační styly",
+          "description": "Citační styly povolené danými metodickými pokyny."
+        }
       }
     },
-
     {
       "id": "citations.consistency",
       "category": "citations",
-      "name": "Citation consistency",
+      "name": "Konzistence citací",
+      "description": "Kontroluje, zda je citační styl používán jednotně v celé práci.",
       "engine": "citation_consistency",
-      "parameters": {
-        "single_style_required": "boolean"
+      "parameters_schema": {
+        "single_style_required": {
+          "type": "boolean",
+          "label": "Jeden styl v celé práci",
+          "description": "Určuje, zda musí být citační styl jednotný."
+        }
       }
     },
-
     {
       "id": "citations.reference_linking",
       "category": "citations",
-      "name": "Citation-reference linking",
+      "name": "Propojení citací a seznamu zdrojů",
+      "description": "Kontroluje, zda citace odpovídají položkám v seznamu zdrojů a naopak.",
       "engine": "reference_integrity",
-      "parameters": {
-        "every_citation_in_reference_list": "boolean",
-        "every_reference_cited": "boolean"
+      "parameters_schema": {
+        "every_citation_in_reference_list": {
+          "type": "boolean",
+          "label": "Každá citace v seznamu",
+          "description": "Každá citace v textu musí mít odpovídající položku v seznamu zdrojů."
+        },
+        "every_reference_cited": {
+          "type": "boolean",
+          "label": "Každý zdroj citován",
+          "description": "Každý zdroj v seznamu musí být použit v textu."
+        }
       }
     },
-
     {
       "id": "citations.direct_quote",
       "category": "citations",
-      "name": "Direct quotation formatting",
+      "name": "Přímé citace",
+      "description": "Kontroluje formátování a požadavky na přímé citace.",
       "engine": "quote_detection",
-      "parameters": {
-        "max_inline_words": "number|null",
-        "requires_page": "boolean"
+      "parameters_schema": {
+        "max_inline_words": {
+          "type": "number",
+          "label": "Maximum slov v krátké citaci",
+          "description": "Maximální počet slov pro krátkou citaci."
+        },
+        "requires_page": {
+          "type": "boolean",
+          "label": "Vyžadovat číslo stránky",
+          "description": "Určuje, zda musí přímá citace obsahovat číslo stránky."
+        }
       }
     },
-
     {
       "id": "references.count",
       "category": "references",
-      "name": "Number of references",
+      "name": "Počet zdrojů",
+      "description": "Kontroluje požadovaný počet zdrojů.",
       "engine": "count_range",
-      "parameters": {
-        "min": "number|null",
-        "max": "number|null"
+      "parameters_schema": {
+        "min": {
+          "type": "number",
+          "label": "Minimum",
+          "description": "Minimální počet zdrojů."
+        },
+        "max": {
+          "type": "number",
+          "label": "Maximum",
+          "description": "Maximální počet zdrojů."
+        }
       }
     },
-
     {
       "id": "references.foreign_ratio",
       "category": "references",
-      "name": "Foreign-language source ratio",
+      "name": "Podíl zahraničních zdrojů",
+      "description": "Kontroluje požadovaný podíl zahraničních zdrojů.",
       "engine": "reference_language_ratio",
-      "parameters": {
-        "min_ratio": "number"
+      "parameters_schema": {
+        "min_ratio": {
+          "type": "number",
+          "label": "Minimální podíl",
+          "description": "Minimální podíl zahraničních zdrojů, například 0.5 = 50 %."
+        }
       }
     },
-
     {
       "id": "references.source_quality",
       "category": "references",
-      "name": "Reference source quality",
+      "name": "Kvalita zdrojů",
+      "description": "Posuzuje typ a odbornou vhodnost použitých zdrojů.",
       "engine": "semantic_source_classification",
-      "parameters": {
-        "allowed_source_types": "array",
-        "preferred_source_types": "array"
+      "parameters_schema": {
+        "allowed_source_types": {
+          "type": "array",
+          "label": "Povolené typy zdrojů",
+          "description": "Typy zdrojů, které jsou přípustné."
+        },
+        "preferred_source_types": {
+          "type": "array",
+          "label": "Preferované typy zdrojů",
+          "description": "Typy zdrojů, které jsou doporučované."
+        }
       }
     },
-
     {
       "id": "references.order",
       "category": "references",
-      "name": "Reference ordering",
+      "name": "Pořadí zdrojů",
+      "description": "Kontroluje způsob řazení seznamu zdrojů.",
       "engine": "reference_order",
-      "parameters": {
-        "order": "alphabetical | chronological | citation_order"
+      "parameters_schema": {
+        "order": {
+          "type": "enum",
+          "label": "Způsob řazení",
+          "description": "Požadovaný způsob řazení zdrojů.",
+          "values": [
+            "alphabetical",
+            "chronological",
+            "citation_order"
+          ]
+        }
       }
     },
-
     {
       "id": "visuals.presence",
       "category": "visuals",
-      "name": "Required visual elements",
+      "name": "Přítomnost tabulek a obrázků",
+      "description": "Kontroluje požadované nebo povolené typy vizuálních prvků.",
       "engine": "object_presence",
-      "parameters": {
-        "object_types": "array"
+      "parameters_schema": {
+        "object_types": {
+          "type": "array",
+          "label": "Typy prvků",
+          "description": "Typy tabulek, obrázků, grafů nebo dalších objektů."
+        }
       }
     },
-
     {
       "id": "visuals.numbering",
       "category": "visuals",
-      "name": "Visual numbering",
+      "name": "Číslování tabulek a obrázků",
+      "description": "Kontroluje číslování vizuálních prvků.",
       "engine": "object_numbering",
-      "parameters": {
-        "separate_sequences": "boolean"
+      "parameters_schema": {
+        "separate_sequences": {
+          "type": "boolean",
+          "label": "Samostatné řady",
+          "description": "Určuje, zda mají jednotlivé typy prvků vlastní číslování."
+        }
       }
     },
-
     {
       "id": "visuals.caption",
       "category": "visuals",
-      "name": "Visual captions",
+      "name": "Popisky tabulek a obrázků",
+      "description": "Kontroluje přítomnost a umístění popisků.",
       "engine": "caption_check",
-      "parameters": {
-        "required": "boolean",
-        "position": "above | below | either"
+      "parameters_schema": {
+        "required": {
+          "type": "boolean",
+          "label": "Popisek povinný",
+          "description": "Určuje, zda musí mít každý prvek popisek."
+        },
+        "position": {
+          "type": "enum",
+          "label": "Umístění popisku",
+          "description": "Požadované umístění popisku.",
+          "values": [
+            "above",
+            "below",
+            "either"
+          ]
+        }
       }
     },
-
     {
       "id": "visuals.text_reference",
       "category": "visuals",
-      "name": "Reference to visual in text",
+      "name": "Odkaz na tabulku nebo obrázek v textu",
+      "description": "Kontroluje, zda jsou tabulky a obrázky zmíněny v textu práce.",
       "engine": "cross_reference_check",
-      "parameters": {
-        "required": "boolean"
+      "parameters_schema": {
+        "required": {
+          "type": "boolean",
+          "label": "Odkaz povinný",
+          "description": "Určuje, zda musí být každý prvek odkazován v textu."
+        }
       }
     },
-
     {
       "id": "visuals.source",
       "category": "visuals",
-      "name": "Visual source attribution",
+      "name": "Zdroj tabulek a obrázků",
+      "description": "Kontroluje uvedení zdroje u převzatých nebo upravených vizuálních prvků.",
       "engine": "source_attribution",
-      "parameters": {
-        "required_for_external_objects": "boolean"
+      "parameters_schema": {
+        "required_for_external_objects": {
+          "type": "boolean",
+          "label": "Zdroj u převzatých prvků",
+          "description": "Určuje, zda musí být u externích prvků uveden zdroj."
+        }
       }
     },
-
     {
       "id": "content.section_requirements",
       "category": "content",
-      "name": "Section semantic requirements",
+      "name": "Požadavky na obsah části práce",
+      "description": "Kontroluje obsah konkrétní části práce podle stanovených požadavků.",
       "engine": "semantic_section_check",
-      "parameters": {
-        "section": "string",
-        "requirements": "array"
+      "parameters_schema": {
+        "section": {
+          "type": "string",
+          "label": "Část práce",
+          "description": "Část práce, která se má kontrolovat."
+        },
+        "requirements": {
+          "type": "array",
+          "label": "Požadavky na obsah",
+          "description": "Obsahové požadavky pro danou část."
+        }
       }
     },
-
     {
       "id": "content.goal_alignment",
       "category": "content",
-      "name": "Goals addressed",
+      "name": "Splnění cílů práce",
+      "description": "Kontroluje, zda výsledná práce řeší stanovené cíle.",
       "engine": "goal_coverage",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "content.methodology_completeness",
       "category": "content",
-      "name": "Methodology completeness",
+      "name": "Úplnost metodiky",
+      "description": "Kontroluje, zda metodika obsahuje všechny požadované informace.",
       "engine": "semantic_content_check",
-      "parameters": {
-        "required_elements": "array"
+      "parameters_schema": {
+        "required_elements": {
+          "type": "array",
+          "label": "Požadované prvky metodiky",
+          "description": "Informace, které musí metodika obsahovat."
+        }
       }
     },
-
     {
       "id": "content.results_discussion_separation",
       "category": "content",
-      "name": "Results/discussion separation",
+      "name": "Výsledky a diskuse",
+      "description": "Kontroluje oddělení nebo správné rozlišení výsledků a diskuse podle metodických pokynů.",
       "engine": "section_content_classification",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "content.conclusion_requirements",
       "category": "content",
-      "name": "Conclusion requirements",
+      "name": "Požadavky na závěr",
+      "description": "Kontroluje, zda závěr obsahuje požadované informace.",
       "engine": "semantic_content_check",
-      "parameters": {
-        "required_elements": "array"
+      "parameters_schema": {
+        "required_elements": {
+          "type": "array",
+          "label": "Požadované prvky závěru",
+          "description": "Informace, které musí závěr obsahovat."
+        }
       }
     },
-
     {
       "id": "academic_integrity.plagiarism_similarity",
       "category": "academic_integrity",
-      "name": "Text similarity threshold",
+      "name": "Podobnost textu",
+      "description": "Vyhodnocuje textovou podobnost podle stanovených limitů.",
       "engine": "similarity_threshold",
-      "parameters": {
-        "thresholds": "array"
+      "parameters_schema": {
+        "thresholds": {
+          "type": "array",
+          "label": "Limity podobnosti",
+          "description": "Prahové hodnoty a jejich význam podle metodických pokynů."
+        }
       }
     },
-
     {
       "id": "academic_integrity.uncited_sources",
       "category": "academic_integrity",
-      "name": "Uncited references",
+      "name": "Necitované zdroje",
+      "description": "Kontroluje zdroje použité bez odpovídající citace.",
       "engine": "reference_integrity",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "ai.usage_policy",
       "category": "academic_integrity",
-      "name": "AI usage policy",
+      "name": "Použití AI",
+      "description": "Kontroluje soulad použití nástrojů AI s pravidly dané instituce.",
       "engine": "policy_semantic_check",
-      "parameters": {
-        "allowed_uses": "array",
-        "forbidden_uses": "array",
-        "disclosure_required": "boolean"
+      "parameters_schema": {
+        "allowed_uses": {
+          "type": "array",
+          "label": "Povolené použití AI",
+          "description": "Způsoby použití AI, které pravidla dovolují."
+        },
+        "forbidden_uses": {
+          "type": "array",
+          "label": "Zakázané použití AI",
+          "description": "Způsoby použití AI, které pravidla zakazují."
+        },
+        "disclosure_required": {
+          "type": "boolean",
+          "label": "Povinné uvedení použití AI",
+          "description": "Určuje, zda musí student použití AI uvést."
+        }
       }
     },
-
     {
       "id": "declaration.presence",
       "category": "administrative",
-      "name": "Author declaration",
+      "name": "Přítomnost prohlášení",
+      "description": "Kontroluje, zda práce obsahuje požadované autorské prohlášení.",
       "engine": "section_presence",
-      "parameters": {}
+      "parameters_schema": {}
     },
-
     {
       "id": "declaration.required_content",
       "category": "administrative",
-      "name": "Declaration content",
+      "name": "Obsah prohlášení",
+      "description": "Kontroluje obsah autorského prohlášení.",
       "engine": "semantic_content_check",
-      "parameters": {
-        "required_elements": "array"
+      "parameters_schema": {
+        "required_elements": {
+          "type": "array",
+          "label": "Požadované prvky prohlášení",
+          "description": "Informace, které musí prohlášení obsahovat."
+        }
       }
     },
-
     {
       "id": "assignment.alignment",
       "category": "assignment",
-      "name": "Alignment with assignment",
+      "name": "Soulad se zadáním",
+      "description": "Kontroluje, zda práce odpovídá zadanému tématu, cílům, metodice a rozsahu.",
       "engine": "semantic_alignment",
-      "parameters": {
-        "check": [
-          "title",
-          "goals",
-          "methodology",
-          "scope"
-        ]
+      "parameters_schema": {
+        "check": {
+          "type": "array",
+          "label": "Kontrolované aspekty",
+          "description": "Aspekty zadání, se kterými se práce porovnává."
+        }
       }
     }
   ]
