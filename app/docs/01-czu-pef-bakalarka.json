@@ -20,641 +20,301 @@
     {
       "id": "assignment.study_program_alignment",
       "definition": "assignment.alignment",
-      "severity": "warning",
-      "deterministic": false,
-      "parameters": {
-        "check": [
-          "study_program",
-          "department_profile",
-          "topic"
-        ]
-      }
+      "severity": "error",
+      
+      "description": "study program, department profile, topic"
     },
     {
       "id": "title.specificity",
       "definition": "content.section_requirements",
       "severity": "recommendation",
-      "deterministic": false,
-      "parameters": {
-        "section": "title",
-        "requirements": [
-          "specific",
-          "concrete",
-          "distinctive",
-          "scope_or_context_identifiable"
-        ]
-      }
+      
+      "description": "Title should be specific, concrete, distinctive, scope_or_context_identifiable"
     },
     {
       "id": "structure.required_sections",
       "definition": "structure.required_sections",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "sections": [
-          "title_page",
-          "assignment",
-          "declaration",
-          "abstract_cs",
-          "keywords_cs",
-          "abstract_en",
-          "keywords_en",
-          "table_of_contents",
-          "introduction",
-          "goal_and_methodology",
-          "theoretical_part",
-          "practical_part",
-          "results_evaluation",
-          "conclusion",
-          "references"
-        ],
-        "optional_sections": [
-          "acknowledgements",
-          "appendices",
-          "list_of_figures",
-          "list_of_tables",
-          "list_of_graphs",
-          "list_of_abbreviations"
-        ]
-      }
+      
+      "description": "Required sections: title_page, assignment, declaration, abstract_cs, keywords_cs, abstract_en, keywords_en, table_of_contents, introduction, goal_and_methodology, theoretical_part, practical_part, results_evaluation, conclusion, references. Optional sections: acknowledgements, appendices, list_of_figures, list_of_tables, list_of_graphs, list_of_abbreviations"
     },
     {
       "id": "structure.section_order",
       "definition": "structure.section_order",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "ordered_sections": [
-          "title_page",
-          "assignment",
-          "declaration",
-          "acknowledgements",
-          "abstract_keywords",
-          "table_of_contents",
-          "introduction",
-          "goal_and_methodology",
-          "theoretical_part",
-          "practical_part",
-          "results_evaluation",
-          "conclusion",
-          "references",
-          "lists",
-          "appendices"
-        ]
-      }
+      
+      "description": "Sections should be ordered: title_page, assignment, declaration, acknowledgements, abstract_keywords, table_of_contents, introduction, goal_and__methodology, theoretical_part, practical_part, results_evaluation, conclusion, references, lists, appendices"
     },
     {
       "id": "structure.allowed_chapter_variants",
       "definition": "structure.section_naming",
-      "severity": "warning",
-      "deterministic": true,
-      "parameters": {
-        "allowed_names_by_position": {
-          "3": [
-            "Teoretická část práce",
-            "Teoretická východiska",
-            "Současný stav poznání řešené problematiky"
-          ],
-          "4": [
-            "Praktická část práce",
-            "Vlastní práce",
-            "Analytická část práce"
-          ],
-          "5": [
-            "Zhodnocení výsledků",
-            "Zhodnocení a doporučení",
-            "Výsledky a diskuse"
-          ]
-        },
-        "exactly_one_variant_per_position": true
-      }
+      "severity": "error",
+      "description": "Kontroluje, zda kapitoly 3–5 bakalářské práce používají jednu z oficiálně stanovených variant názvu: kapitola 3 – „Teoretická část práce“, „Teoretická východiska“ nebo „Současný stav poznání řešené problematiky“; kapitola 4 – „Praktická část práce“, „Vlastní práce“ nebo „Analytická část práce“; kapitola 5 – „Zhodnocení výsledků“, „Zhodnocení a doporučení“ nebo „Výsledky a diskuse“"
     },
     {
       "id": "structure.heading_depth",
       "definition": "structure.section_depth",
       "severity": "warning",
-      "deterministic": true,
-      "parameters": {
-        "max_level": 3,
-        "minimum_subsections_when_divided": 2
-      }
+      
+      "description": "Kontroluje, zda bakalářská práce nepřekračuje tři úrovně členění nadpisů a zda každá kapitola nebo část rozdělená na podkapitoly obsahuje alespoň dvě podkapitoly"
     },
     {
       "id": "structure.chapter_starts_new_page",
       "definition": "structure.chapter_starts_new_page",
-      "severity": "warning",
-      "deterministic": true,
-      "parameters": {}
+      "severity": "error",
+      
+      "description": "Kontroluje, zda každá hlavní kapitola bakalářské práce začíná na nové stránce"
     },
     {
       "id": "format.page_size",
       "definition": "format.page_size",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "allowed": [
-          "A4"
-        ]
-      }
+      
+      "description": "Kontroluje, zda je bakalářská práce formátována na papíru velikosti A4"
     },
     {
       "id": "format.margins",
       "definition": "format.margins",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "top_mm": 30,
-        "inner_mm": 35,
-        "bottom_mm": 25,
-        "outer_mm": 20,
-        "double_sided_mirror_margins": true
-      }
+      
+      "description": "Kontroluje, zda bakalářská práce používá předepsané okraje stránky: 30 mm nahoře, 35 mm uvnitř, 25 mm dole a 20 mm vně, se zrcadlovým nastavením vnitřních a vnějších okrajů při oboustranném tisku"
     },
     {
       "id": "format.font",
       "definition": "format.font",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "allowed_fonts": [
-          "Times New Roman"
-        ]
-      }
+      
+      "description": "Předepsané písmo - Times New Roman"
     },
     {
       "id": "format.font_size",
       "definition": "format.font_size",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "target_pt": 12
-      }
+      
+      "descriptioin": "Velikost písma - 12px"
     },
     {
       "id": "format.line_spacing",
       "definition": "format.line_spacing",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "allowed_values": [
-          1.5
-        ]
-      }
-    },
-    {
-      "id": "format.printing",
-      "definition": "format.page_size",
-      "severity": "recommendation",
-      "deterministic": true,
-      "parameters": {
-        "paper": "A4",
-        "preferred": "double_sided",
-        "single_sided_allowed": true
-      }
+      
+      "description": "Řádkování - 1,5"
     },
     {
       "id": "length.main_text",
       "definition": "length.main_text",
       "severity": "warning",
-      "deterministic": true,
-      "parameters": {
-        "metric": "pages",
-        "min": 30,
-        "recommended_max": 40,
-        "scope": "introduction_to_conclusion"
-      }
+      
+      "description": "Kontroluje, zda hlavní text bakalářské práce od úvodu po závěr obsahuje alespoň 30 stran a zda odpovídá doporučenému rozsahu 30–40 stran"
     },
     {
       "id": "pagination.numbering_start",
       "definition": "format.page_numbering",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "numbering_starts_at": "first_numbered_text_page",
-        "first_numbered_page_number": 3,
-        "front_matter_counted_but_not_numbered": [
-          "title_page",
-          "assignment",
-          "declaration",
-          "acknowledgements"
-        ]
-      }
+      
+      "description": "Kontroluje, zda číslování stran začíná na první číslované straně textové části a zda je tato strana označena číslem 3, přičemž předchozí strany se do číslování započítávají, ale jejich čísla se nezobrazují"
     },
     {
       "id": "frontmatter.title_page",
       "definition": "structure.required_sections",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "required_elements": [
-          "university",
-          "faculty",
-          "department",
-          "university_logo",
-          "work_type",
-          "work_title",
-          "author_name_without_titles",
-          "copyright_year"
-        ],
-        "logo_required": false
-      }
-    },
-    {
-      "id": "frontmatter.assignment",
-      "definition": "structure.required_sections",
-      "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "required": true,
-        "must_be_in": [
-          "printed_version",
-          "electronic_version"
-        ]
-      }
+      "description": "Kontroluje, zda titulní list bakalářské práce obsahuje požadované údaje: název univerzity, fakultu, katedru, logo univerzity, typ práce, název práce, jméno autora bez titulů a copyrightovou doložku „© rok odevzdání ČZU v Praze“"
     },
     {
       "id": "frontmatter.declaration",
       "definition": "declaration.required_content",
       "severity": "error",
-      "deterministic": false,
-      "parameters": {
-        "required_elements": [
-          "independent_work_declaration",
-          "citation_declaration",
-          "date",
-          "signature"
-        ]
-      }
+      
+      "description": "Kontroluje, zda čestné prohlášení obsahuje prohlášení o samostatném vypracování bakalářské práce, datum a podpis"
     },
     {
       "id": "abstract.languages",
       "definition": "section.abstract.languages",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "languages": [
-          "cs",
-          "en"
-        ]
-      }
+      
+      "description": "Kontroluje, zda bakalářská práce obsahuje abstrakt v českém i anglickém jazyce"
     },
     {
       "id": "abstract.length",
       "definition": "section.abstract.length",
       "severity": "warning",
-      "deterministic": true,
-      "parameters": {
-        "metric": "lines",
-        "max": 15
-      }
+      
+      "description": "Kontroluje, zda rozsah abstraktu nepřesahuje 15 řádků"
     },
     {
       "id": "abstract.content",
       "definition": "section.abstract.required_content",
       "severity": "error",
-      "deterministic": false,
-      "parameters": {
-        "required_elements": [
-          "summary"
-        ],
-        "forbidden": [
-          "unsupported_detail"
-        ]
-      }
+      
+      "description": "Kontroluje, zda abstrakt obsahuje stručné shrnutí bakalářské práce a zda neobsahuje informace, které přesahují nebo nejsou podloženy obsahem práce"
     },
     {
       "id": "keywords.count",
       "definition": "keywords.count",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "min": 7,
-        "max": 10
-      }
-    },
-    {
-      "id": "keywords.title_overlap",
-      "definition": "keywords.title_overlap",
-      "severity": "recommendation",
-      "deterministic": false,
-      "parameters": {
-        "allowed_overlap": false
-      }
+      
+      "description": "Kontroluje, zda bakalářská práce obsahuje 7 až 10 klíčových slov"
     },
     {
       "id": "content.goal_quality",
       "definition": "content.section_requirements",
       "severity": "warning",
-      "deterministic": false,
-      "parameters": {
-        "section": "goal",
-        "requirements": [
-          "unambiguous",
-          "achievable",
-          "verifiable",
-          "not_a_method",
-          "main_goal_with_optional_subgoals"
-        ]
-      }
+
+      "description": "Kontroluje, zda je cíl bakalářské práce jednoznačně formulován, je dosažitelný a ověřitelný, není zaměňován za metodu, zda může být stanoven hlavní cíl spolu s případnými dílčími cíli, zda nejsou samostatně formulovány cíle teoretické a praktické části a zda cíl není formulován jako analýza, popis, komparace, charakterizace, přiblížení, nastínění, seznámení čtenáře nebo pochopení"
     },
     {
       "id": "content.goal_time",
       "definition": "language.writing_style",
       "severity": "warning",
-      "deterministic": false,
-      "parameters": {
-        "section": "goal",
-        "allowed_tenses": [
-          "present"
-        ]
-      }
+      
+      "description": "Kontroluje, zda je cíl bakalářské práce formulován v přítomném čase"
     },
     {
       "id": "content.methodology_time",
       "definition": "language.writing_style",
       "severity": "warning",
-      "deterministic": false,
-      "parameters": {
-        "section": "methodology",
-        "allowed_tenses": [
-          "present",
-          "past"
-        ]
-      }
+      
+      "description": "Kontroluje, zda je metodika bakalářské práce formulována v přítomném nebo minulém čase"
+    },
+    {
+      "id": "assignment.methodology_time",
+      "definition": "language.writing_style",
+      "severity": "warning",
+
+      "description": "Kontroluje, zda je metodika uvedená v zadání bakalářské práce formulována v budoucím čase"
     },
     {
       "id": "language.person_and_voice",
       "definition": "language.writing_style",
       "severity": "error",
-      "deterministic": false,
-      "parameters": {
-        "forbidden_person": [
-          "first_singular",
-          "first_plural"
-        ],
-        "required_person": [
-          "third_singular",
-          "third_plural"
-        ],
-        "required_voice": [
-          "passive"
-        ]
-      }
+      
+      "description": "Kontroluje, zda text bakalářské práce nepoužívá první osobu jednotného ani množného čísla a zda je formulován ve třetí osobě nebo v trpném rodě"
     },
     {
       "id": "references.minimum_books_in_assignment",
       "definition": "references.count",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "scope": "assignment",
-        "source_type": "book",
-        "min": 5
-      }
+      
+      "description": "Kontroluje, zda zadání bakalářské práce obsahuje alespoň 5 knižních zdrojů"
     },
     {
       "id": "references.source_quality",
       "definition": "references.source_quality",
       "severity": "recommendation",
-      "deterministic": false,
-      "parameters": {
-        "avoid": [
-          "scripts",
-          "sources_without_identifiable_author",
-          "non_expert_authors"
-        ],
-        "prefer": [
-          "expert_sources",
-          "recent_sources",
-          "sources_recommended_in_assignment"
-        ],
-        "historical_sources_allowed_when_contextually_justified": true
-      }
+
+      "description": "Kontroluje kvalitu použitých zdrojů s ohledem na odbornost autorů, aktuálnost zdrojů a doporučení uvedená v zadání práce; skripta by neměla být citována; nežádoucí jsou zdroje s nejasným autorstvím nebo autorem, kterého nelze považovat za odborníka v dané oblasti; zdroje doporučené v zadání BP by měly být v práci využity; cizojazyčné názvy zdrojů se nepřekládají a uvádějí se latinkou; historické zdroje jsou přípustné, pokud jsou odůvodněné kontextem"
     },
     {
       "id": "references.recency",
       "definition": "references.source_quality",
       "severity": "recommendation",
-      "deterministic": true,
-      "parameters": {
-        "preferred_max_age_years": 10,
-        "exceptions": [
-          "historical_context",
-          "topic_specific_justification"
-        ]
-      }
+      
+      "description": "Kontroluje, zda použité zdroje nejsou starší než 10 let, s výjimkou zdrojů odůvodněných historickým kontextem nebo specifiky tématu"
     },
     {
       "id": "citations.style",
       "definition": "citations.style",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "standard": "CSN ISO 690:2011",
-        "recommended_in_text_system": "Harvard author-date"
-      }
+      
+      "description": "Kontroluje, zda jsou citace a bibliografické citace zpracovány v souladu s normou ČSN ISO 690:2011, zda je v celé práci důsledně používán jeden z povolených způsobů zápisu citačních odkazů (forma jméno–datum, forma číselného odkazu nebo průběžné poznámky) a zda zvolený způsob odpovídá formátu seznamu použitých zdrojů"
     },
     {
       "id": "citations.reference_linking",
       "definition": "citations.reference_linking",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "every_citation_in_reference_list": true,
-        "every_reference_cited": true
-      }
+      
+      "description": "Kontroluje, zda je každý zdroj uvedený v seznamu použitých zdrojů v práci skutečně citován a zda je každý citovaný zdroj uveden v seznamu použitých zdrojů"
     },
     {
       "id": "citations.paraphrase_preference",
       "definition": "citations.direct_quote",
       "severity": "recommendation",
-      "deterministic": false,
-      "parameters": {
-        "preferred": "paraphrase",
-        "direct_quote_requires": [
-          "quotation_marks",
-          "citation"
-        ],
-        "direct_quote_style": "italic"
-      }
+      
+      "description": "Kontroluje, zda jsou při použití přímých citací správně použity uvozovky a uveden odkaz na zdroj a zda je upřednostňováno parafrázování"
     },
     {
       "id": "references.order",
       "definition": "references.order",
       "severity": "warning",
-      "deterministic": true,
-      "parameters": {
-        "allowed": [
-          "alphabetical_by_author",
-          "numeric_by_first_use"
-        ],
-        "must_be_consistent": true
-      }
+      
+      "description": "Kontroluje, zda je seznam použitých zdrojů uspořádán podle zvoleného citačního systému a zda je způsob řazení v celé práci konzistentní"
     },
     {
       "id": "visuals.requirement",
       "definition": "visuals.presence",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "object_types": [
-          "figure",
-          "table",
-          "graph",
-          "other_object"
-        ],
-        "rule": "only_when_used"
-      }
+      
+      "description": "Kontroluje, zda jsou v bakalářské práci správně používány obrázky, tabulky, grafy a další objekty podle jejich skutečného využití v textu"
     },
     {
       "id": "visuals.numbering",
       "definition": "visuals.numbering",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "separate_sequences": true,
-        "scope": "whole_work"
-      }
+      
+      "description": "Kontroluje, zda jsou obrázky, tabulky a grafy v celé bakalářské práci číslovány v samostatných číselných řadách"
     },
     {
       "id": "visuals.caption",
       "definition": "visuals.caption",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "required": true,
-        "caption_font": "Times New Roman",
-        "caption_size_pt": 12,
-        "position": "either"
-      }
+      
+      "description": "Kontroluje, zda mají obrázky, tabulky a grafy povinný popisek umístěný před nebo za příslušným objektem"
     },
     {
       "id": "visuals.source",
       "definition": "visuals.source",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "required": true,
-        "position": "below_object",
-        "source_style": "same_as_in_text_citation"
-      }
+      
+      "description": "Kontroluje, zda má každý obrázek, tabulka nebo graf uveden uvedený zdroj pod příslušným objektem a zda je zdroj zapsán stejným způsobem jako citace v textu"
     },
     {
       "id": "visuals.text_reference",
       "definition": "visuals.text_reference",
       "severity": "error",
-      "deterministic": false,
-      "parameters": {
-        "required": true,
-        "should_be_close_to_object": true
-      }
+      
+      "description": "Kontroluje, zda je každý obrázek, tabulka nebo graf v textu uveden a zda se odkaz na něj nachází v jeho blízkosti"
     },
     {
       "id": "visuals.alignment",
       "definition": "format.alignment",
       "severity": "warning",
-      "deterministic": true,
-      "parameters": {
-        "objects": [
-          "figures",
-          "tables",
-          "equations"
-        ],
-        "alignment": "center"
-      }
+      
+      "description": "Kontroluje, zda jsou obrázky, tabulky a rovnice v bakalářské práci zarovnány na střed"
     },
     {
       "id": "content.theory_practice_link",
       "definition": "content.goal_alignment",
       "severity": "warning",
-      "deterministic": false,
-      "parameters": {
-        "check": [
-          "theoretical_part_supports_practical_part",
-          "goal_is_reflected_in_both_parts",
-          "logical_continuity"
-        ]
-      }
+      
+      "description": "Kontroluje, zda jsou teoretická a praktická část bakalářské práce logicky propojeny, zda teoretická část podporuje praktickou část a zda se cíl práce promítá do obou částí"
     },
     {
       "id": "content.results_conclusion_alignment",
       "definition": "content.goal_alignment",
       "severity": "warning",
-      "deterministic": false,
-      "parameters": {
-        "check": [
-          "goals_addressed",
-          "results_support_conclusion",
-          "conclusions_are_specific"
-        ]
-      }
+      
+      "description": "Kontroluje, zda jsou cíle práce v závěru vyhodnoceny, zda výsledky podporují závěry a zda jsou závěry formulovány konkrétně"
     },
     {
       "id": "language.academic_style",
       "definition": "language.writing_style",
       "severity": "recommendation",
-      "deterministic": false,
-      "parameters": {
-        "requirements": [
-          "professional_academic_language",
-          "clarity",
-          "precise_formulations",
-          "no_first_person"
-        ]
-      }
+      
+      "description": "Kontroluje, zda je jazyk bakalářské práce odborný a profesionální, jasný a přesný a zda se vyhýbá první osobě"
     },
     {
       "id": "integrity.similarity",
       "definition": "academic_integrity.plagiarism_similarity",
       "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "uncited_similarity_plagiarism_above_percent": 10,
-        "cited_compilation_plagiarism_above_percent": 20,
-        "self_similarity_allowed_up_to_percent": 40,
-        "supervisor_comment_required_at_or_above_percent": 15,
-        "uncited_references_noncompliance_above_percent": 10,
-        "decision_authority": "state_final_exam_commission"
-      }
-    },
-    {
-      "id": "integrity.electronic_printed_identity",
-      "definition": "declaration.required_content",
-      "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "electronic_and_printed_versions_identical": true
-      }
-    },
-    {
-      "id": "submission.assignment_and_upload",
-      "definition": "structure.required_sections",
-      "severity": "error",
-      "deterministic": true,
-      "parameters": {
-        "electronic_submission_required": true,
-        "printed_and_electronic_identity_required": true
-      }
+      "description": "Kontroluje míru podobnosti bakalářské práce s jinými pracemi a posuzuje ji podle stanovených pravidel: při podobnosti alespoň 15 % s jinou autorskou prací musí vedoucí práce uvést komentář ve svém posudku; podobnost vyšší než 10 % s jinou autorskou prací bez řádného citování je považována za plagiát; podobnost vyšší než 20 % s řádně citovanými zdroji je považována za plagiát z důvodu kompilace ucelených částí textu; podobnost s vlastními dříve publikovanými pracemi se za plagiát nepovažuje, pokud součet těchto podobností nepřekročí 40 %. O tom, zda se jedná o plagiát, rozhoduje státní zkušební komise."
     },
     {
       "id": "evaluation.coverage",
       "definition": "content.section_requirements",
       "severity": "recommendation",
-      "deterministic": false,
-      "parameters": {
-        "criteria": [
-          "goal_and_methodology",
-          "data_and_information",
-          "overall_solution",
-          "structure",
-          "academic_literature_and_citations",
-          "language",
-          "precision",
-          "formal_quality",
-          "goal_completion_and_conclusions",
-          "abstract_and_keywords_content_match"
-        ]
-      }
+      
+      "description": "Kontroluje, zda bakalářská práce splňuje stanovené požadavky na cíl a metodiku, strukturu práce, používání odborných zdrojů a citací, jazykové zpracování a obsah abstraktu a klíčových slov"
     }
   ]
 }
+

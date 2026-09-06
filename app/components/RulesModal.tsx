@@ -101,7 +101,6 @@ export const RulesModal = ({
 
   return (
     <>
-      {" "}
       <Dialog
         open={isDialogOpen && Boolean(selectedDocument)}
         onClose={() => setIsDialogOpen(false)}
@@ -126,11 +125,10 @@ export const RulesModal = ({
               <Stack spacing={1.5}>
                 {Object.entries(rulesByCategory ?? {}).map(
                   ([category, rules]) => (
-                    <Accordion
+                    <Box
                       key={category}
-                      disableGutters
-                      elevation={0}
                       sx={{
+                        p: 2,
                         border: "1px solid",
                         borderColor: "divider",
                         borderRadius: 1,
@@ -142,110 +140,104 @@ export const RulesModal = ({
                         },
                       }}
                     >
-                      <AccordionSummary>
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          //       alignItems="center"
-                        >
-                          <Typography sx={{ fontWeight: 700 }}>
-                            {categoryMap.get(category) ?? formatLabel(category)}
-                          </Typography>
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ alignItems: "center" }}
+                      >
+                        <Typography sx={{ fontWeight: 700 }}>
+                          {categoryMap.get(category) ?? formatLabel(category)}
+                        </Typography>
 
-                          <Chip label={rules.length} size="small" />
-                        </Stack>
-                      </AccordionSummary>
+                        <Chip label={rules.length} size="small" />
+                      </Stack>
+                      <Stack spacing={2}>
+                        {rules.map((rule, index) => {
+                          const definition = definitionMap.get(rule.definition);
 
-                      <AccordionDetails>
-                        <Stack spacing={2}>
-                          {rules.map((rule, index) => {
-                            const definition = definitionMap.get(
-                              rule.definition,
-                            );
+                          if (!definition) {
+                            return null;
+                          }
 
-                            if (!definition) {
-                              return null;
-                            }
+                          return (
+                            <Box key={rule.definition}>
+                              {index > 0 && <Divider sx={{ mb: 2 }} />}
 
-                            return (
-                              <Box key={rule.definition}>
-                                {index > 0 && <Divider sx={{ mb: 2 }} />}
-
-                                <Stack spacing={1}>
-                                  <Stack
-                                    direction={{
-                                      xs: "column",
-                                      sm: "row",
-                                    }}
-                                    spacing={1}
-                                    // alignItems={{
-                                    //   xs: "flex-start",
-                                    //   sm: "center",
-                                    // }}
-                                  >
-                                    <Typography
-                                      variant="subtitle1"
-                                      sx={{
-                                        fontWeight: 700,
-                                      }}
-                                    >
-                                      {definition.name}
-                                    </Typography>
-
-                                    <Chip
-                                      label={severityLabel(rule.severity)}
-                                      color={severityColor(rule.severity)}
-                                      size="small"
-                                    />
-                                  </Stack>
-
+                              <Stack spacing={1}>
+                                <Stack
+                                  direction={{
+                                    xs: "column",
+                                    sm: "row",
+                                  }}
+                                  spacing={1}
+                                  // alignItems={{
+                                  //   xs: "flex-start",
+                                  //   sm: "center",
+                                  // }}
+                                >
                                   <Typography
-                                    variant="body2"
-                                    color="text.secondary"
+                                    variant="subtitle1"
+                                    sx={{
+                                      fontWeight: 700,
+                                    }}
                                   >
-                                    {definition.description}
+                                    {definition.name}
                                   </Typography>
 
-                                  {Object.entries(rule.parameters).map(
-                                    ([key, value]) => {
-                                      const parameter =
-                                        definition.parameters_schema[
-                                          key as keyof typeof definition.parameters_schema
-                                        ];
-
-                                      return (
-                                        <Box key={key} sx={{ mt: 0.5 }}>
-                                          <Typography
-                                            variant="body2"
-                                            sx={{
-                                              fontWeight: 600,
-                                            }}
-                                          >
-                                            {parameter?.label ??
-                                              formatLabel(key)}
-                                          </Typography>
-
-                                          {parameter?.description && (
-                                            <Typography
-                                              variant="caption"
-                                              color="text.secondary"
-                                            >
-                                              {parameter.description}
-                                            </Typography>
-                                          )}
-
-                                          <ParameterValue value={value} />
-                                        </Box>
-                                      );
-                                    },
-                                  )}
+                                  <Chip
+                                    label={severityLabel(rule.severity)}
+                                    color={severityColor(rule.severity)}
+                                    size="small"
+                                  />
                                 </Stack>
-                              </Box>
-                            );
-                          })}
-                        </Stack>
-                      </AccordionDetails>
-                    </Accordion>
+
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  {definition.description}:{" "}
+                                  {Array.isArray(rule.parameters.check) &&
+                                    rule.parameters.check.join(", ")}
+                                </Typography>
+
+                                {Object.entries(rule.parameters).map(
+                                  ([key, value]) => {
+                                    const parameter =
+                                      definition.parameters_schema[
+                                        key as keyof typeof definition.parameters_schema
+                                      ];
+
+                                    return (
+                                      <Box key={key} sx={{ mt: 0.5 }}>
+                                        <Typography
+                                          variant="body2"
+                                          sx={{
+                                            fontWeight: 600,
+                                          }}
+                                        >
+                                          {parameter?.label ?? formatLabel(key)}
+                                        </Typography>
+
+                                        {parameter?.description && (
+                                          <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                          >
+                                            {parameter.description}
+                                          </Typography>
+                                        )}
+
+                                        <ParameterValue value={value} />
+                                      </Box>
+                                    );
+                                  },
+                                )}
+                              </Stack>
+                            </Box>
+                          );
+                        })}
+                      </Stack>
+                    </Box>
                   ),
                 )}
               </Stack>

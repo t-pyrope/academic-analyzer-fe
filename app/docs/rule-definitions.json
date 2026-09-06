@@ -758,7 +758,7 @@
       "id": "assignment.alignment",
       "category": "assignment",
       "name": "Soulad se zadáním",
-      "description": "Kontroluje, zda práce odpovídá zadanému tématu, cílům, metodice a rozsahu.",
+      "description": "Proběhne kontrola, zda práce odpovídá",
       "engine": "semantic_alignment",
       "parameters_schema": {
         "check": {
