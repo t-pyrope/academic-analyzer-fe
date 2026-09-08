@@ -1,7 +1,4 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
   Chip,
@@ -9,22 +6,20 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
+  Paper,
   Stack,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
 import definitionsDocument from "@/app/docs/rule-definitions.json";
 import { DOCUMENTS } from "@/app/components/constants";
-import { RuleValue } from "@/app/components/types";
 import { formatLabel } from "./utils";
-import { ParameterValue } from "@/app/components/ParameterValue";
 
 type GuidelineRule = {
-  definition: string;
+  description: string;
   severity: string;
-  parameters: Record<string, RuleValue>;
 };
+
 const definitionMap = new Map(
   definitionsDocument.rule_definitions.map((definition) => [
     definition.id,
@@ -92,6 +87,8 @@ export const RulesModal = ({
 
       const category = definition.category;
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       (groups[category] ??= []).push(rule);
 
       return groups;
@@ -122,21 +119,21 @@ export const RulesModal = ({
             </DialogTitle>
 
             <DialogContent dividers>
-              <Stack spacing={1.5}>
+              <Stack>
                 {Object.entries(rulesByCategory ?? {}).map(
                   ([category, rules]) => (
                     <Box
                       key={category}
                       sx={{
                         p: 2,
-                        border: "1px solid",
-                        borderColor: "divider",
-                        borderRadius: 1,
+                        // border: "1px solid",
+                        // borderColor: "divider",
+                        // borderRadius: 1,
                         "&:before": {
                           display: "none",
                         },
                         "&:not(:last-child)": {
-                          marginBottom: 1,
+                          // marginBottom: 1,
                         },
                       }}
                     >
@@ -152,90 +149,30 @@ export const RulesModal = ({
                         <Chip label={rules.length} size="small" />
                       </Stack>
                       <Stack spacing={2}>
-                        {rules.map((rule, index) => {
-                          const definition = definitionMap.get(rule.definition);
-
-                          if (!definition) {
-                            return null;
-                          }
-
-                          return (
-                            <Box key={rule.definition}>
-                              {index > 0 && <Divider sx={{ mb: 2 }} />}
-
-                              <Stack spacing={1}>
-                                <Stack
-                                  direction={{
-                                    xs: "column",
-                                    sm: "row",
-                                  }}
-                                  spacing={1}
-                                  // alignItems={{
-                                  //   xs: "flex-start",
-                                  //   sm: "center",
-                                  // }}
-                                >
-                                  <Typography
-                                    variant="subtitle1"
-                                    sx={{
-                                      fontWeight: 700,
-                                    }}
-                                  >
-                                    {definition.name}
-                                  </Typography>
-
-                                  <Chip
-                                    label={severityLabel(rule.severity)}
-                                    color={severityColor(rule.severity)}
-                                    size="small"
-                                  />
-                                </Stack>
-
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {definition.description}:{" "}
-                                  {Array.isArray(rule.parameters.check) &&
-                                    rule.parameters.check.join(", ")}
-                                </Typography>
-
-                                {Object.entries(rule.parameters).map(
-                                  ([key, value]) => {
-                                    const parameter =
-                                      definition.parameters_schema[
-                                        key as keyof typeof definition.parameters_schema
-                                      ];
-
-                                    return (
-                                      <Box key={key} sx={{ mt: 0.5 }}>
-                                        <Typography
-                                          variant="body2"
-                                          sx={{
-                                            fontWeight: 600,
-                                          }}
-                                        >
-                                          {parameter?.label ?? formatLabel(key)}
-                                        </Typography>
-
-                                        {parameter?.description && (
-                                          <Typography
-                                            variant="caption"
-                                            color="text.secondary"
-                                          >
-                                            {parameter.description}
-                                          </Typography>
-                                        )}
-
-                                        <ParameterValue value={value} />
-                                      </Box>
-                                    );
-                                  },
-                                )}
-                              </Stack>
-                            </Box>
-                          );
-                        })}
+                        {rules.map((rule) => (
+                          <Paper
+                            key={rule.description}
+                            elevation={0}
+                            variant="outlined"
+                            sx={{
+                              p: 1,
+                              gap: 1,
+                              // display: "flex",
+                              // flexDirection: "column",
+                              // alignItems: "flex-start",
+                            }}
+                          >
+                            <Chip
+                              label={severityLabel(rule.severity)}
+                              size="small"
+                              color={severityColor(rule.severity)}
+                              sx={{ mb: 1 }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                              {rule.description}
+                            </Typography>
+                          </Paper>
+                        ))}
                       </Stack>
                     </Box>
                   ),
