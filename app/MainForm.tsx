@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Box,
   Button,
@@ -11,26 +11,25 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { ReferenceSelect } from "@/app/components/ReferenceSelect";
-
-type FormData = {
-  university: string;
-  documents: File[];
-  assignment: string;
-};
+import pefBp from "@/app/docs/01-czu-pef-bakalarka.json";
+import { CheckResult, FormValues } from "@/app/types";
+import { Results } from "@/app/Results";
 
 const MAX_DOCUMENTS = 30;
 const ACCEPTED_DOCUMENT_TYPES =
   ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 export default function MainForm() {
-  const { register, setValue, watch, handleSubmit } = useForm<FormData>({
+  const [results, setResults] = useState<{ [key: string]: CheckResult }>({});
+  const { register, setValue, watch, handleSubmit } = useForm<FormValues>({
     defaultValues: {
-      university: "ČZU",
+      rules: pefBp.profile_id,
       documents: [],
       assignment: "",
     },
   });
   const documents = watch("documents");
+  const selectedProfileId = watch("rules");
 
   const addDocuments = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedDocuments = Array.from(event.target.files ?? []);
@@ -44,7 +43,6 @@ export default function MainForm() {
       },
     );
 
-    // Allows choosing the same file again after it has been removed.
     event.target.value = "";
   };
 
@@ -56,15 +54,42 @@ export default function MainForm() {
     );
   };
 
+  const onSubmit = async (form: FormValues) => {
+    if (form.documents.length === 0) {
+      return;
+    }
+
+    const body = new FormData();
+
+    body.append("rules", form.rules);
+    body.append("assignment", form.assignment);
+
+    form.documents.forEach((file) => {
+      body.append("documents", file);
+    });
+
+    const response = await fetch("/api/analyze", {
+      method: "POST",
+      body,
+    });
+
+    const resBody = await response.json();
+
+    setResults(resBody);
+  };
+
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(() => undefined)}
+      onSubmit={handleSubmit(onSubmit)}
       noValidate
       sx={{ maxWidth: 640, width: "100%" }}
     >
       <Stack spacing={3}>
-        <ReferenceSelect />
+        <ReferenceSelect
+          {...register("rules")}
+          selectedProfileId={selectedProfileId}
+        />
 
         <Stack spacing={1.25}>
           <Typography
@@ -72,7 +97,7 @@ export default function MainForm() {
             variant="subtitle1"
             sx={{ fontWeight: 600 }}
           >
-            Required documents
+            Akademické práce
           </Typography>
           <Paper
             variant="outlined"
@@ -89,7 +114,7 @@ export default function MainForm() {
                 variant="outlined"
                 disabled={documents.length >= MAX_DOCUMENTS}
               >
-                Upload documents
+                Nahrát soubor
                 <input
                   hidden
                   type="file"
@@ -99,7 +124,7 @@ export default function MainForm() {
                 />
               </Button>
               <Typography variant="body2" color="text.secondary">
-                PDF and DOCX files only · up to {MAX_DOCUMENTS} documents
+                Pouze PDF a DOCX soubory, maximálně {MAX_DOCUMENTS} souborů
               </Typography>
             </Stack>
           </Paper>
@@ -107,7 +132,7 @@ export default function MainForm() {
           {documents.length > 0 && (
             <Stack spacing={1}>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                Selected files ({documents.length}/{MAX_DOCUMENTS})
+                Nahrané dokumenty ({documents.length}/{MAX_DOCUMENTS}):
               </Typography>
               {documents.map((document, index) => (
                 <Paper
@@ -133,7 +158,7 @@ export default function MainForm() {
                     color="inherit"
                     onClick={() => removeDocument(index)}
                   >
-                    Remove
+                    Odebrat
                   </Button>
                 </Paper>
               ))}
@@ -146,8 +171,8 @@ export default function MainForm() {
           fullWidth
           multiline
           minRows={5}
-          label="Assignment"
-          placeholder="Enter the assignment given by the teacher..."
+          label="Zadání práce"
+          placeholder="Cílem semestrální práce je navrhnout a implementovat webovou aplikaci..."
         />
 
         <Button
@@ -156,8 +181,10 @@ export default function MainForm() {
           size="large"
           sx={{ alignSelf: "flex-start" }}
         >
-          Analyze documents
+          Analyzovat
         </Button>
+
+        <Results results={results} selectedProfileId={selectedProfileId} />
       </Stack>
     </Box>
   );

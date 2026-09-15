@@ -87,8 +87,6 @@ export const RulesModal = ({
 
       const category = definition.category;
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       (groups[category] ??= []).push(rule);
 
       return groups;

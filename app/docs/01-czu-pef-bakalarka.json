@@ -8,6 +8,13 @@
     "work_type": "bakalářská práce",
     "faculty_code": "PEF"
   },
+  "documentRules": {
+    "pageSize": "A4",
+    "margins": "30 mm nahoře, 35 mm uvnitř, 25 mm dole a 20 mm vně",
+    "fontFamily": "Times New Roman",
+    "fontSize": "12",
+    "lineSpacing": "1.5"
+  },
   "rules": [
     {
       "id": "assignment.study_program_alignment",
@@ -38,36 +45,6 @@
       "definition": "structure.chapter_starts_new_page",
       "severity": "error",
       "description": "Každá hlavní kapitola bakalářské práce začíná na nové stránce"
-    },
-    {
-      "id": "format.page_size",
-      "definition": "format.page_size",
-      "severity": "error",
-      "description": "Bakalářská práce je formátována na papíru velikosti A4"
-    },
-    {
-      "id": "format.margins",
-      "definition": "format.margins",
-      "severity": "error",
-      "description": "Bakalářská práce používá předepsané okraje stránky: 30 mm nahoře, 35 mm uvnitř, 25 mm dole a 20 mm vně, se zrcadlovým nastavením vnitřních a vnějších okrajů při oboustranném tisku"
-    },
-    {
-      "id": "format.font",
-      "definition": "format.font",
-      "severity": "error",
-      "description": "Předepsané písmo - Times New Roman"
-    },
-    {
-      "id": "format.font_size",
-      "definition": "format.font_size",
-      "severity": "error",
-      "description": "Velikost písma - 12px"
-    },
-    {
-      "id": "format.line_spacing",
-      "definition": "format.line_spacing",
-      "severity": "error",
-      "description": "Řádkování - 1,5"
     },
     {
       "id": "pagination.numbering_start",

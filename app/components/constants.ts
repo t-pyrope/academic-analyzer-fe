@@ -5,4 +5,7 @@ import tfZp from "@/app/docs/04-czu-tf-dp-bp.json";
 import fldZp from "@/app/docs/05-czu-fld-zp.json";
 import ivpKp from "@/app/docs/07-czu-ivp-kp.json";
 
-export const DOCUMENTS = [pefBp, fappzBp, fappzDp, tfZp, fldZp, ivpKp];
+export const DOCUMENTS = [
+  pefBp,
+  // fappzBp, fappzDp, tfZp, fldZp, ivpKp
+];

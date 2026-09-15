@@ -1,35 +1,27 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
 import { Stack, TextField } from "@mui/material";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 import { DOCUMENTS } from "@/app/components/constants";
 import { RulesModal } from "@/app/components/RulesModal";
 
-export const ReferenceSelect = (
-  props: Partial<UseFormRegisterReturn<string>>,
-) => {
-  const [selectedProfileId, setSelectedProfileId] = useState("");
-
+export const ReferenceSelect = ({
+  selectedProfileId,
+  ...props
+}: {
+  selectedProfileId: string;
+} & Partial<UseFormRegisterReturn<string>>) => {
   const options = DOCUMENTS.map((doc) => ({
     label: `${doc.institution.faculty_code}, ${doc.institution.work_type} (${doc.year})`,
     value: doc.profile_id,
   }));
-
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setSelectedProfileId(event.target.value);
-    props.onChange?.(event);
-  };
 
   return (
     <>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={1}
-        // alignItems={{ xs: "stretch", sm: "center" }}
         component="div"
       >
         <TextField
@@ -37,8 +29,6 @@ export const ReferenceSelect = (
           select
           fullWidth
           label="Metodické pokyny"
-          value={selectedProfileId}
-          onChange={handleChange}
           slotProps={{
             select: {
               native: true,
