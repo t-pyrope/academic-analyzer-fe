@@ -1,6 +1,7 @@
-import styles from "./page.module.css";
 import MainForm from "@/app/MainForm";
 import { Typography } from "@mui/material";
+
+import styles from "./page.module.css";
 
 export default function Home() {
   return (

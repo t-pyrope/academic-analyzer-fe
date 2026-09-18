@@ -19,3 +19,11 @@ export interface CheckResult {
     lineSpacing: PdfCheckResult;
   };
 }
+
+export interface DocumentRules {
+  pageSize: string;
+  marginLeftMm: number;
+  fontFamily: string;
+  fontSize: number;
+  lineSpacing: number;
+}

@@ -10,10 +10,10 @@
   },
   "documentRules": {
     "pageSize": "A4",
-    "margins": "30 mm nahoře, 35 mm uvnitř, 25 mm dole a 20 mm vně",
+    "marginLeftMm": 35,
     "fontFamily": "Times New Roman",
-    "fontSize": "12",
-    "lineSpacing": "1.5"
+    "fontSize": 12,
+    "lineSpacing": 1.5
   },
   "rules": [
     {

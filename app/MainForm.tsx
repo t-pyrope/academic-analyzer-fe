@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import {
   Box,
   Button,
@@ -12,24 +12,48 @@ import {
 import { useForm } from "react-hook-form";
 import { ReferenceSelect } from "@/app/components/ReferenceSelect";
 import pefBp from "@/app/docs/01-czu-pef-bakalarka.json";
-import { CheckResult, FormValues } from "@/app/types";
-import { Results } from "@/app/Results";
+import { FormValues } from "@/app/types";
+import {
+  LOCAL_STORAGE_DOCUMENT_ID_KEY,
+  LOCAL_STORAGE_RESULTS_KEY,
+} from "@/app/constants";
+import { useRouter } from "next/navigation";
+import { setStateFromLocalStorage } from "@/app/utils";
 
 const MAX_DOCUMENTS = 30;
 const ACCEPTED_DOCUMENT_TYPES =
   ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 export default function MainForm() {
-  const [results, setResults] = useState<{ [key: string]: CheckResult }>({});
-  const { register, setValue, watch, handleSubmit } = useForm<FormValues>({
+  const {
+    register,
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
     defaultValues: {
       rules: pefBp.profile_id,
       documents: [],
       assignment: "",
     },
   });
+  const router = useRouter();
+
   const documents = watch("documents");
   const selectedProfileId = watch("rules");
+
+  useEffect(() => {
+    const results = setStateFromLocalStorage(LOCAL_STORAGE_RESULTS_KEY);
+    const documentId = setStateFromLocalStorage(LOCAL_STORAGE_DOCUMENT_ID_KEY);
+
+    if (results && documentId) {
+      router.replace("/results");
+    } else {
+      localStorage.removeItem(LOCAL_STORAGE_DOCUMENT_ID_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_RESULTS_KEY);
+    }
+  }, [router]);
 
   const addDocuments = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedDocuments = Array.from(event.target.files ?? []);
@@ -75,7 +99,12 @@ export default function MainForm() {
 
     const resBody = await response.json();
 
-    setResults(resBody);
+    localStorage.setItem(LOCAL_STORAGE_RESULTS_KEY, JSON.stringify(resBody));
+    localStorage.setItem(
+      LOCAL_STORAGE_DOCUMENT_ID_KEY,
+      JSON.stringify(form.rules),
+    );
+    router.push("/results");
   };
 
   return (
@@ -180,11 +209,10 @@ export default function MainForm() {
           variant="contained"
           size="large"
           sx={{ alignSelf: "flex-start" }}
+          loading={isSubmitting}
         >
           Analyzovat
         </Button>
-
-        <Results results={results} selectedProfileId={selectedProfileId} />
       </Stack>
     </Box>
   );

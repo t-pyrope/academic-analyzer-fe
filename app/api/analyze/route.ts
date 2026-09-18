@@ -4,6 +4,7 @@ import { analyzeSchema } from "@/lib/validation";
 import { analyzeDocuments } from "@/lib/ai";
 import { analyzePdf } from "@/lib/pdf/analyzePdf";
 import { CheckResult } from "@/app/types";
+import { DOCUMENTS } from "@/app/components/constants";
 
 export async function POST(req: Request) {
   try {
@@ -35,8 +36,18 @@ export async function POST(req: Request) {
 
     const results: { [key: string]: CheckResult } = {};
 
+    const selectedDocument = DOCUMENTS.find(
+      (document) => document.profile_id === rules,
+    );
+
+    if (!selectedDocument) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 403 });
+    }
     for (const doc of documents) {
-      const analysisResult = await analyzePdf(doc);
+      const analysisResult = await analyzePdf(
+        doc,
+        selectedDocument.documentRules,
+      );
 
       results[doc.name] = {
         pdf: analysisResult,
@@ -53,8 +64,6 @@ export async function POST(req: Request) {
       //   ),
       // );
     }
-
-    console.log(results);
 
     // const response = null;
 

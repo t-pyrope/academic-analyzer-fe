@@ -1,7 +1,7 @@
 import path from "node:path";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { PDFObjects } from "pdfjs-dist/types/src/display/pdf_objects";
-import { CheckResult, PdfCheckResult } from "@/app/types";
+import { CheckResult, DocumentRules, PdfCheckResult } from "@/app/types";
 
 const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
@@ -35,9 +35,12 @@ const isA4 = (width: number, height: number): boolean => {
   return portrait || landscape;
 };
 
-const checkPageSize = (pages: PageData[]): PdfCheckResult => {
-  const invalidPages = pages.filter(
-    ({ width, height }) => !isA4(width, height),
+const checkPageSize = (
+  pages: PageData[],
+  pageSize: DocumentRules["pageSize"],
+): PdfCheckResult => {
+  const invalidPages = pages.filter(({ width, height }) =>
+    pageSize === "A4" ? !isA4(width, height) : true,
   );
 
   return {
@@ -45,10 +48,8 @@ const checkPageSize = (pages: PageData[]): PdfCheckResult => {
 
     message:
       invalidPages.length === 0
-        ? "All pages are A4"
-        : `Pages with incorrect size: ${invalidPages
-            .map((p) => p.page)
-            .join(", ")}`,
+        ? "OK"
+        : `${invalidPages.map((p) => p.page).length} stránek nejsou A4`,
 
     details: invalidPages.map((p) => ({
       page: p.page,
@@ -84,8 +85,14 @@ const groupValues = (values: number[], tolerance: number) => {
     .sort((a, b) => b.count - a.count);
 };
 
-const checkMargins = (pages: PageData[]): PdfCheckResult => {
+const checkMarginLeft = (
+  pages: PageData[],
+  marginLeftMm: DocumentRules["marginLeftMm"],
+): PdfCheckResult => {
   const leftValues: number[] = [];
+
+  // const expectedMarginPt = marginLeftMm * (72 / 25.4);
+  const tolerancePt = 2;
 
   for (const page of pages) {
     const textItems = page.textItems.filter(
@@ -96,9 +103,7 @@ const checkMargins = (pages: PageData[]): PdfCheckResult => {
 
     if (!textItems.length) continue;
 
-    const left = Math.min(
-      ...textItems.map((item) => Math.round(item.x * 10) / 10),
-    );
+    const left = Math.min(...textItems.map((item) => item.x));
 
     leftValues.push(left);
   }
@@ -106,42 +111,46 @@ const checkMargins = (pages: PageData[]): PdfCheckResult => {
   if (leftValues.length === 0) {
     return {
       valid: false,
-      message: "Could not determine left margin",
+      message: "Nebylo možné zjistit velikost levého okraje stránky",
       details: [],
     };
   }
 
-  // Группируем близкие значения left
-  const groups = groupValues(leftValues, 1);
-
-  // Самая частая группа = основной left
+  const groups = groupValues(leftValues, tolerancePt);
   const mainLeft = groups[0];
-
-  const valid = mainLeft !== undefined;
 
   if (!mainLeft) {
     return {
       valid: false,
-      message: "Could not determine left margin",
+      message: "Nebylo možné zjistit velikost levého okraje stránky",
       details: [],
     };
   }
 
+  const detectedMm = mainLeft.average * (25.4 / 72);
+  const valid = Math.abs(detectedMm - marginLeftMm) <= 1;
+
   return {
     valid,
-    message: `Main left margin is ${mainLeft.average} pt`,
+    message: valid
+      ? `OK (${detectedMm.toFixed(1)} mm)`
+      : `nevalidní (${detectedMm.toFixed(1)} mm)`,
     details: {
-      detected: mainLeft.average,
+      detected: detectedMm,
+      expected: marginLeftMm,
       count: mainLeft.count,
       distribution: groups.map((group) => ({
-        average: group.average,
+        average: group.average * (25.4 / 72),
         count: group.count,
       })),
     },
   };
 };
 
-const checkFont = (pages: PageData[]): PdfCheckResult => {
+const checkFont = (
+  pages: PageData[],
+  fontFamily: DocumentRules["fontFamily"],
+): PdfCheckResult => {
   const fonts: { [key: string]: number } = {};
 
   for (const page of pages) {
@@ -152,8 +161,8 @@ const checkFont = (pages: PageData[]): PdfCheckResult => {
 
       if (font?.name) {
         const fontName = font.name.includes("TimesNewRoman")
-          ? "TimesNewRoman"
-          : font.name;
+          ? "Times New Roman"
+          : font.name.replace(/^[A-Z]{6}\+/, "");
         fonts[fontName] = fontName in fonts ? fonts[fontName] + 1 : 1;
       }
     }
@@ -161,14 +170,19 @@ const checkFont = (pages: PageData[]): PdfCheckResult => {
 
   const mainFont = Object.entries(fonts).sort((a, b) => b[1] - a[1])[0]?.[0];
 
+  const valid = mainFont === fontFamily;
+
   return {
-    valid: mainFont === "TimesNewRoman",
-    message: mainFont,
+    valid,
+    message: valid ? "OK" : `nevalidní (${mainFont})`,
     details: fonts,
   };
 };
 
-const checkFontSize = (pages: PageData[]): PdfCheckResult => {
+const checkFontSize = (
+  pages: PageData[],
+  fontSize: DocumentRules["fontSize"],
+): PdfCheckResult => {
   const fontSizes = pages
     .flatMap((page) => page.textItems)
     .map((item) => item.fontSize)
@@ -177,7 +191,7 @@ const checkFontSize = (pages: PageData[]): PdfCheckResult => {
   if (fontSizes.length === 0) {
     return {
       valid: false,
-      message: "Could not determine font size",
+      message: "Nebylo možné zjistit velikost písma",
       details: [],
     };
   }
@@ -190,15 +204,13 @@ const checkFontSize = (pages: PageData[]): PdfCheckResult => {
 
   const mainFontSize = [...groups.entries()].sort((a, b) => b[1] - a[1])[0][0];
 
-  const valid = Math.abs(mainFontSize - 12) <= TOLERANCE;
+  const valid = Math.abs(mainFontSize - fontSize) <= TOLERANCE;
 
   return {
     valid,
-    message: valid
-      ? `Main text font size is ${mainFontSize} pt`
-      : `Main text font size is ${mainFontSize} pt, expected 12 pt`,
+    message: valid ? "OK" : `nevalidní (${mainFontSize} pt)`,
     details: {
-      expected: 12,
+      expected: fontSize,
       detected: mainFontSize,
       distribution: Object.fromEntries(groups),
     },
@@ -226,18 +238,21 @@ const getMainFontSize = (pages: PageData[]): number | undefined => {
   return [...groups.entries()].sort((a, b) => b[1] - a[1])[0][0];
 };
 
-const checkLineSpacing = (pages: PageData[]): PdfCheckResult => {
+const checkLineSpacing = (
+  pages: PageData[],
+  lineSpacing: DocumentRules["lineSpacing"],
+): PdfCheckResult => {
   const mainFontSize = getMainFontSize(pages);
 
   if (mainFontSize === undefined) {
     return {
       valid: false,
-      message: "Could not determine main font size",
+      message: "Nebylo možné zjistit velikost písma",
       details: [],
     };
   }
 
-  const expectedLineSpacing = mainFontSize * 1.5 * 1.1;
+  const expectedLineSpacing = mainFontSize * lineSpacing * 1.1;
 
   const spacings: number[] = [];
 
@@ -262,7 +277,7 @@ const checkLineSpacing = (pages: PageData[]): PdfCheckResult => {
   if (spacings.length === 0) {
     return {
       valid: false,
-      message: "Could not determine line spacing",
+      message: "Nebylo možné zjistit řádkování",
       details: [],
     };
   }
@@ -281,19 +296,18 @@ const checkLineSpacing = (pages: PageData[]): PdfCheckResult => {
   if (detected === undefined) {
     return {
       valid: false,
-      message: "Could not determine line spacing",
+      message: "Nebylo možné zjistit řádkování",
       details: [],
     };
   }
 
   const valid = Math.abs(detected - expectedLineSpacing) <= 1;
+  const detectedLineSpacing = detected / (mainFontSize * 1.1);
 
   return {
     valid,
 
-    message: valid
-      ? `${detected} pt`
-      : `zjištěno ${detected} pt, očekávané ${expectedLineSpacing.toFixed(1)} pt`,
+    message: valid ? `OK` : `nevalidní (${detectedLineSpacing.toFixed(2)})`,
 
     details: valid
       ? null
@@ -306,7 +320,10 @@ const checkLineSpacing = (pages: PageData[]): PdfCheckResult => {
   };
 };
 
-export const analyzePdf = async (file: File): Promise<CheckResult["pdf"]> => {
+export const analyzePdf = async (
+  file: File,
+  documentRules: DocumentRules,
+): Promise<CheckResult["pdf"]> => {
   const buffer = await file.arrayBuffer();
 
   const pdf = await getDocument({
@@ -356,10 +373,10 @@ export const analyzePdf = async (file: File): Promise<CheckResult["pdf"]> => {
   }
 
   return {
-    pageSize: checkPageSize(pages),
-    margins: checkMargins(pages),
-    font: checkFont(pages),
-    fontSize: checkFontSize(pages),
-    lineSpacing: checkLineSpacing(pages),
+    pageSize: checkPageSize(pages, documentRules.pageSize),
+    margins: checkMarginLeft(pages, documentRules.marginLeftMm),
+    font: checkFont(pages, documentRules.fontFamily),
+    fontSize: checkFontSize(pages, documentRules.fontSize),
+    lineSpacing: checkLineSpacing(pages, documentRules.lineSpacing),
   };
 };
