@@ -1,28 +1,26 @@
 import OpenAI from "openai";
-import { DOCUMENTS } from "@/app/components/constants";
+import { AnalysisResult, SelectedDocument } from "@/app/types";
 
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-export const analyzeDocuments = async (ruleId: string, documents: File[]) => {
-  const rules = DOCUMENTS.find((doc) => doc.profile_id === ruleId);
-
-  if (!rules) {
-    return;
-  }
-
+export const analyzeDocuments = async (
+  documents: File[],
+  selectedDocument: SelectedDocument,
+) => {
   const systemPrompt = `
 Ты — модуль автоматической предварительной проверки академических работ.
 
 Проанализируй предоставленный документ согласно правилам профиля.
 
 ПРАВИЛА:
-${JSON.stringify(rules, null, 2)}
+${JSON.stringify(selectedDocument.rules, null, 2)}
 
 ЗАДАЧИ:
 
 1. Проверь каждое применимое правило.
+2. Если нет нарушения правила, не возвращай его
 2. Для каждого нарушения укажи:
    - ID правила;
    - описание нарушения;
@@ -40,7 +38,6 @@ ${JSON.stringify(rules, null, 2)}
 - Не объявляй нарушение только потому, что в извлечённом тексте
   нет информации о визуальном или техническом свойстве документа.
 - Отвечай на языке документа.
-- Используй Markdown.
 `;
 
   const uploadedFiles = await Promise.all(
@@ -53,11 +50,11 @@ ${JSON.stringify(rules, null, 2)}
       });
     }),
   );
-
-  // console.log("uploadedFiles", uploadedFiles);
-
   const response = await openai.responses.create({
-    model: "gpt-4o-mini",
+    model: "gpt-5.6-terra",
+    reasoning: {
+      effort: "medium",
+    },
     instructions: systemPrompt,
     input: [
       {
@@ -74,9 +71,66 @@ ${JSON.stringify(rules, null, 2)}
         ],
       },
     ],
+    text: {
+      format: {
+        type: "json_schema",
+        name: "academic_analysis",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            violations: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  ruleId: { type: "string" },
+                  description: { type: "string" },
+                  location: { type: "string" },
+                  explanation: { type: "string" },
+                },
+                required: ["ruleId", "description", "location", "explanation"],
+                additionalProperties: false,
+              },
+            },
+
+            impossibleToDetermine: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  ruleId: { type: "string" },
+                  reason: { type: "string" },
+                },
+                required: ["ruleId", "reason"],
+                additionalProperties: false,
+              },
+            },
+
+            summary: {
+              type: "string",
+            },
+
+            questions: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+          },
+
+          required: [
+            "violations",
+            "impossibleToDetermine",
+            "summary",
+            "questions",
+          ],
+
+          additionalProperties: false,
+        },
+      },
+    },
   });
 
-  // console.log("response", response);
-
-  return response.output_text;
+  return JSON.parse(response.output_text) as AnalysisResult;
 };

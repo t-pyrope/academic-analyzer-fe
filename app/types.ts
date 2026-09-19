@@ -5,20 +5,28 @@ export type FormValues = {
 };
 
 export interface PdfCheckResult {
-  valid: boolean;
+  valid?: boolean;
   message: string;
   details?: unknown;
 }
 
-export interface CheckResult {
-  pdf: {
-    pageSize: PdfCheckResult;
-    margins: PdfCheckResult;
-    font: PdfCheckResult;
-    fontSize: PdfCheckResult;
-    lineSpacing: PdfCheckResult;
-  };
-}
+export type AnalysisResult = {
+  violations: {
+    ruleId: string;
+    description: string;
+    location: string;
+    explanation: string;
+  }[];
+
+  impossibleToDetermine: {
+    ruleId: string;
+    reason: string;
+  }[];
+
+  summary: string;
+
+  questions: string[];
+};
 
 export interface DocumentRules {
   pageSize: string;
@@ -26,4 +34,37 @@ export interface DocumentRules {
   fontFamily: string;
   fontSize: number;
   lineSpacing: number;
+  maxFileSizeInMb: number;
+  chapterStartsNewPage?: boolean;
+}
+
+export interface CheckResult {
+  pdf: {
+    [K in keyof DocumentRules]: PdfCheckResult;
+  };
+  ai: AnalysisResult;
+}
+
+export interface DocumentRule {
+  id: string;
+  definition: string;
+  severity: string;
+  description: string;
+}
+
+export interface SelectedDocument {
+  schema_version: string;
+  year: number;
+  profile_id: string;
+
+  institution: {
+    university: string;
+    faculty: string;
+    work_type: string;
+    faculty_code: string;
+  };
+
+  documentRules: DocumentRules;
+
+  rules: DocumentRule[];
 }

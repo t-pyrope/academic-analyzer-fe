@@ -88,6 +88,7 @@ const groupValues = (values: number[], tolerance: number) => {
 const checkMarginLeft = (
   pages: PageData[],
   marginLeftMm: DocumentRules["marginLeftMm"],
+  fontSize: DocumentRules["fontSize"],
 ): PdfCheckResult => {
   const leftValues: number[] = [];
 
@@ -97,7 +98,7 @@ const checkMarginLeft = (
   for (const page of pages) {
     const textItems = page.textItems.filter(
       (item) =>
-        Math.abs(item.fontSize - 12) <= TOLERANCE &&
+        Math.abs(item.fontSize - fontSize) <= TOLERANCE &&
         item.text.trim().length > 0,
     );
 
@@ -170,50 +171,21 @@ const checkFont = (
 
   const mainFont = Object.entries(fonts).sort((a, b) => b[1] - a[1])[0]?.[0];
 
-  const valid = mainFont === fontFamily;
+  const valid =
+    mainFont === fontFamily
+      ? true
+      : mainFont.includes("CIDFont")
+        ? undefined
+        : false;
 
   return {
     valid,
-    message: valid ? "OK" : `nevalidní (${mainFont})`,
+    message: valid
+      ? "OK"
+      : valid === false
+        ? `nevalidní (${mainFont})`
+        : "nebylo možné zjistit písmo",
     details: fonts,
-  };
-};
-
-const checkFontSize = (
-  pages: PageData[],
-  fontSize: DocumentRules["fontSize"],
-): PdfCheckResult => {
-  const fontSizes = pages
-    .flatMap((page) => page.textItems)
-    .map((item) => item.fontSize)
-    .filter((size) => size > 5 && size < 30);
-
-  if (fontSizes.length === 0) {
-    return {
-      valid: false,
-      message: "Nebylo možné zjistit velikost písma",
-      details: [],
-    };
-  }
-
-  const groups = new Map<number, number>();
-
-  for (const size of fontSizes) {
-    groups.set(size, (groups.get(size) ?? 0) + 1);
-  }
-
-  const mainFontSize = [...groups.entries()].sort((a, b) => b[1] - a[1])[0][0];
-
-  const valid = Math.abs(mainFontSize - fontSize) <= TOLERANCE;
-
-  return {
-    valid,
-    message: valid ? "OK" : `nevalidní (${mainFontSize} pt)`,
-    details: {
-      expected: fontSize,
-      detected: mainFontSize,
-      distribution: Object.fromEntries(groups),
-    },
   };
 };
 
@@ -236,6 +208,32 @@ const getMainFontSize = (pages: PageData[]): number | undefined => {
   }
 
   return [...groups.entries()].sort((a, b) => b[1] - a[1])[0][0];
+};
+
+const checkFontSize = (
+  pages: PageData[],
+  fontSize: DocumentRules["fontSize"],
+): PdfCheckResult => {
+  const mainFontSize = getMainFontSize(pages);
+
+  if (mainFontSize === undefined) {
+    return {
+      valid: false,
+      message: "Nebylo možné zjistit velikost písma",
+      details: [],
+    };
+  }
+
+  const valid = Math.abs(mainFontSize - fontSize) <= TOLERANCE;
+
+  return {
+    valid,
+    message: valid ? "OK" : `nevalidní (${mainFontSize} pt)`,
+    details: {
+      expected: fontSize,
+      detected: mainFontSize,
+    },
+  };
 };
 
 const checkLineSpacing = (
@@ -320,6 +318,23 @@ const checkLineSpacing = (
   };
 };
 
+const checkFileSize = (file: File, maxFileSizeInMb: number) => {
+  const fileSizeMb = file.size / (1024 * 1024);
+  const valid = fileSizeMb <= maxFileSizeInMb;
+
+  return {
+    valid,
+    message: valid ? "OK" : `nevalidní (${fileSizeMb.toFixed(2)}MB)`,
+  };
+};
+
+const checkChapterStartsNewPage = (file: File) => {
+  return {
+    valid: false,
+    message: "",
+  };
+};
+
 export const analyzePdf = async (
   file: File,
   documentRules: DocumentRules,
@@ -372,11 +387,22 @@ export const analyzePdf = async (
     });
   }
 
-  return {
+  const result: CheckResult["pdf"] = {
     pageSize: checkPageSize(pages, documentRules.pageSize),
-    margins: checkMarginLeft(pages, documentRules.marginLeftMm),
-    font: checkFont(pages, documentRules.fontFamily),
+    marginLeftMm: checkMarginLeft(
+      pages,
+      documentRules.marginLeftMm,
+      documentRules.fontSize,
+    ),
+    fontFamily: checkFont(pages, documentRules.fontFamily),
     fontSize: checkFontSize(pages, documentRules.fontSize),
     lineSpacing: checkLineSpacing(pages, documentRules.lineSpacing),
+    maxFileSizeInMb: checkFileSize(file, documentRules.maxFileSizeInMb),
   };
+
+  if (documentRules.chapterStartsNewPage) {
+    result.chapterStartsNewPage = checkChapterStartsNewPage(file);
+  }
+
+  return result;
 };

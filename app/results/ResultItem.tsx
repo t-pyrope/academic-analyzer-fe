@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useId } from "react";
-import { CheckResult, PdfCheckResult } from "@/app/types";
+import { CheckResult, PdfCheckResult, SelectedDocument } from "@/app/types";
 
 const DocumentCheckResultItem = ({
   title,
@@ -23,7 +23,13 @@ const DocumentCheckResultItem = ({
       {title}:{" "}
       <Typography
         component="span"
-        sx={{ color: result.valid ? "success.main" : "error.main" }}
+        sx={{
+          color: result.valid
+            ? "success.main"
+            : result.valid === false
+              ? "error.main"
+              : "warning.main",
+        }}
       >
         {result.message}
       </Typography>
@@ -38,7 +44,7 @@ export const ResultItem = ({
 }: {
   title: string;
   result: CheckResult;
-  selectedDocument: any;
+  selectedDocument: SelectedDocument;
 }) => {
   const id = useId();
 
@@ -81,12 +87,12 @@ export const ResultItem = ({
 
             <DocumentCheckResultItem
               title={`Písmo (${fontFamily})`}
-              result={result.pdf.font}
+              result={result.pdf.fontFamily}
             />
 
             <DocumentCheckResultItem
-              title={`Okraje stránky (${marginLeftMm})`}
-              result={result.pdf.margins}
+              title={`Okraje stránky (kontroluje se pouze levý okraj ${marginLeftMm}mm)`}
+              result={result.pdf.marginLeftMm}
             />
 
             <DocumentCheckResultItem
@@ -103,6 +109,39 @@ export const ResultItem = ({
               title={`Rozměr stránek (${pageSize})`}
               result={result.pdf.pageSize}
             />
+
+            <Typography component="h3" variant="h4">
+              Výsledek analýzy AI
+            </Typography>
+
+            <Typography component="h4" variant="h5">
+              Violations
+            </Typography>
+
+            <Typography>{result.ai.summary}</Typography>
+
+            <Stack spacing={2}>
+              {result.ai.violations.map((violation) => (
+                <Stack spacing={1} key={violation.ruleId}>
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    {violation.description} ({violation.location})
+                  </Typography>
+                  <Typography>
+                    {violation.explanation} ({violation.ruleId})
+                  </Typography>
+                </Stack>
+              ))}
+            </Stack>
+
+            <Typography component="h4" variant="h5">
+              Impossible to determine
+            </Typography>
+
+            {result.ai.impossibleToDetermine.map((point) => (
+              <Stack key={point.ruleId}>
+                {point.reason} ({point.ruleId})
+              </Stack>
+            ))}
           </Stack>
         </Stack>
       </AccordionDetails>

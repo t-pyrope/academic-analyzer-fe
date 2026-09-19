@@ -31,9 +31,6 @@ export async function POST(req: Request) {
     const {
       data: { rules, documents, assignment },
     } = parsed;
-
-    // const response = await analyzeDocuments(rules, documents);
-
     const results: { [key: string]: CheckResult } = {};
 
     const selectedDocument = DOCUMENTS.find(
@@ -48,9 +45,11 @@ export async function POST(req: Request) {
         doc,
         selectedDocument.documentRules,
       );
+      const aiResults = await analyzeDocuments([doc], selectedDocument);
 
       results[doc.name] = {
         pdf: analysisResult,
+        ai: aiResults ?? "",
       };
 
       // console.log(

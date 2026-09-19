@@ -13,7 +13,9 @@
     "marginLeftMm": 35,
     "fontFamily": "Times New Roman",
     "fontSize": 12,
-    "lineSpacing": 1.5
+    "lineSpacing": 1.5,
+    "maxFileSizeInMb": 50,
+    "chapterStartsNewPage": true
   },
   "rules": [
     {
@@ -39,12 +41,6 @@
       "definition": "structure.section_naming",
       "severity": "error",
       "description": "Kapitoly 3–5 bakalářské práce používají jednu z oficiálně stanovených variant názvu: kapitola 3 – „Teoretická část práce“, „Teoretická východiska“ nebo „Současný stav poznání řešené problematiky“; kapitola 4 – „Praktická část práce“, „Vlastní práce“ nebo „Analytická část práce“; kapitola 5 – „Zhodnocení výsledků“, „Zhodnocení a doporučení“ nebo „Výsledky a diskuse“"
-    },
-    {
-      "id": "structure.chapter_starts_new_page",
-      "definition": "structure.chapter_starts_new_page",
-      "severity": "error",
-      "description": "Každá hlavní kapitola bakalářské práce začíná na nové stránce"
     },
     {
       "id": "pagination.numbering_start",
@@ -135,18 +131,6 @@
       "definition": "visuals.text_reference",
       "severity": "error",
       "description": "Každý obrázek, tabulka nebo graf jsou v textu uvedené, odkaz na něj se nachází v jeho blízkosti"
-    },
-    {
-      "id": "integrity.similarity",
-      "definition": "academic_integrity.plagiarism_similarity",
-      "severity": "error",
-      "description": "Kontroluje míru podobnosti bakalářské práce s jinými pracemi a posuzuje ji podle stanovených pravidel: při podobnosti alespoň 15 % s jinou autorskou prací musí vedoucí práce uvést komentář ve svém posudku; podobnost vyšší než 10 % s jinou autorskou prací bez řádného citování je považována za plagiát; podobnost vyšší než 20 % s řádně citovanými zdroji je považována za plagiát z důvodu kompilace ucelených částí textu; podobnost s vlastními dříve publikovanými pracemi se za plagiát nepovažuje, pokud součet těchto podobností nepřekročí 40 %. O tom, zda se jedná o plagiát, rozhoduje státní zkušební komise."
-    },
-    {
-      "id": "file.pdf_size",
-      "definition": "file.size",
-      "severity": "error",
-      "description": "Velikost souboru PDF bakalářské práce nepřesahuje 50 MB"
     },
     {
       "id": "visuals.one_page",
@@ -285,6 +269,14 @@
       "definition": "tables.alignment",
       "severity": "recommendation",
       "description": "Text v levém sloupci tabulky je zarovnán vlevo a text v ostatních sloupcích doprostřed; zarovnání do bloku je méně vhodné"
+    }
+  ],
+  "needInternetRules": [
+    {
+      "id": "integrity.similarity",
+      "definition": "academic_integrity.plagiarism_similarity",
+      "severity": "error",
+      "description": "Kontroluje míru podobnosti bakalářské práce s jinými pracemi a posuzuje ji podle stanovených pravidel: při podobnosti alespoň 15 % s jinou autorskou prací musí vedoucí práce uvést komentář ve svém posudku; podobnost vyšší než 10 % s jinou autorskou prací bez řádného citování je považována za plagiát; podobnost vyšší než 20 % s řádně citovanými zdroji je považována za plagiát z důvodu kompilace ucelených částí textu; podobnost s vlastními dříve publikovanými pracemi se za plagiát nepovažuje, pokud součet těchto podobností nepřekročí 40 %. O tom, zda se jedná o plagiát, rozhoduje státní zkušební komise."
     }
   ]
 }
