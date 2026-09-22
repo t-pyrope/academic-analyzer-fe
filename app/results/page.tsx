@@ -6,7 +6,7 @@ import {
   LOCAL_STORAGE_RESULTS_KEY,
 } from "@/app/constants";
 import { useRouter } from "next/navigation";
-import { CheckResult } from "@/app/types";
+import { CheckResult } from "@/types";
 import { DOCUMENTS } from "@/app/components/constants";
 import { Box, Button, Typography } from "@mui/material";
 import { setStateFromLocalStorage } from "@/app/utils";

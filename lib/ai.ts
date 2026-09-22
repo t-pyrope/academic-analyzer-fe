@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { AnalysisResult, SelectedDocument } from "@/app/types";
+import { AnalysisResult, SelectedDocument } from "@/types";
 
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,

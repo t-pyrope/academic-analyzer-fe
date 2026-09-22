@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useId } from "react";
-import { CheckResult, PdfCheckResult, SelectedDocument } from "@/app/types";
+import { CheckResult, PdfCheckResult, SelectedDocument } from "@/types";
 
 const DocumentCheckResultItem = ({
   title,
@@ -110,38 +110,50 @@ export const ResultItem = ({
               result={result.pdf.pageSize}
             />
 
-            <Typography component="h3" variant="h4">
-              Výsledek analýzy AI
-            </Typography>
+            {selectedDocument.documentRules.chapterStartsNewPage &&
+              result.pdf.chapterStartsNewPage && (
+                <DocumentCheckResultItem
+                  title="Všechny hlavní kapitoly začínají na nové stránce"
+                  result={result.pdf.chapterStartsNewPage}
+                />
+              )}
 
-            <Typography component="h4" variant="h5">
-              Violations
-            </Typography>
+            {result.ai && (
+              <>
+                <Typography component="h3" variant="h4">
+                  Výsledek analýzy AI
+                </Typography>
 
-            <Typography>{result.ai.summary}</Typography>
+                <Typography component="h4" variant="h5">
+                  Violations
+                </Typography>
 
-            <Stack spacing={2}>
-              {result.ai.violations.map((violation) => (
-                <Stack spacing={1} key={violation.ruleId}>
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    {violation.description} ({violation.location})
-                  </Typography>
-                  <Typography>
-                    {violation.explanation} ({violation.ruleId})
-                  </Typography>
+                <Typography>{result.ai.summary}</Typography>
+
+                <Stack spacing={2}>
+                  {result.ai.violations.map((violation) => (
+                    <Stack spacing={1} key={violation.ruleId}>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        {violation.description} ({violation.location})
+                      </Typography>
+                      <Typography>
+                        {violation.explanation} ({violation.ruleId})
+                      </Typography>
+                    </Stack>
+                  ))}
                 </Stack>
-              ))}
-            </Stack>
 
-            <Typography component="h4" variant="h5">
-              Impossible to determine
-            </Typography>
+                <Typography component="h4" variant="h5">
+                  Impossible to determine
+                </Typography>
 
-            {result.ai.impossibleToDetermine.map((point) => (
-              <Stack key={point.ruleId}>
-                {point.reason} ({point.ruleId})
-              </Stack>
-            ))}
+                {result.ai.impossibleToDetermine.map((point) => (
+                  <Stack key={point.ruleId}>
+                    {point.reason} ({point.ruleId})
+                  </Stack>
+                ))}
+              </>
+            )}
           </Stack>
         </Stack>
       </AccordionDetails>

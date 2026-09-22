@@ -1,3 +1,5 @@
+import { PDFObjects } from "pdfjs-dist/types/src/display/pdf_objects";
+
 export type FormValues = {
   rules: string;
   documents: File[];
@@ -42,7 +44,7 @@ export interface CheckResult {
   pdf: {
     [K in keyof DocumentRules]: PdfCheckResult;
   };
-  ai: AnalysisResult;
+  ai?: AnalysisResult;
 }
 
 export interface DocumentRule {
@@ -67,4 +69,20 @@ export interface SelectedDocument {
   documentRules: DocumentRules;
 
   rules: DocumentRule[];
+}
+
+export interface PageData {
+  page: number;
+  width: number;
+  height: number;
+  commonObjs: PDFObjects;
+  textItems: {
+    text: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fontName: string;
+    fontSize: number;
+  }[];
 }

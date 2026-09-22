@@ -12,7 +12,7 @@ import {
 import { useForm } from "react-hook-form";
 import { ReferenceSelect } from "@/app/components/ReferenceSelect";
 import pefBp from "@/app/docs/01-czu-pef-bakalarka.json";
-import { FormValues } from "@/app/types";
+import { FormValues } from "@/types";
 import {
   LOCAL_STORAGE_DOCUMENT_ID_KEY,
   LOCAL_STORAGE_RESULTS_KEY,
