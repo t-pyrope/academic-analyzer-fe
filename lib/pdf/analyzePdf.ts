@@ -9,6 +9,8 @@ import { checkFileSize } from "@/lib/pdf/checkFileSize";
 import { checkFontSize } from "@/lib/pdf/checkFontSize";
 import { checkPageSize } from "@/lib/pdf/checkPageSize";
 
+import { extractTables } from "./extractTables";
+
 const getMainFontSize = (pages: PageData[]): number | undefined => {
   const fontSizes = pages
     .flatMap((page) => page.textItems)
@@ -49,6 +51,8 @@ export const analyzePdf = async (
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
 
+    // console.log("PAGE: ", page);
+
     // possible bottleneck
     await page.getOperatorList();
 
@@ -84,6 +88,27 @@ export const analyzePdf = async (
   }
 
   const mainFontSize = getMainFontSize(pages);
+
+  // TODO
+  const tablesByPage = await extractTables(
+    new Uint8Array(await file.arrayBuffer()),
+  );
+  let tableCount = 0;
+
+  for (const [pageIndex, tables] of tablesByPage.entries()) {
+    for (const [index, table] of tables.entries()) {
+      tableCount++;
+      console.log(`Страница ${pageIndex + 1}, таблица ${index + 1}:`);
+      console.table(table.rows);
+      console.dir(table, {
+        depth: null,
+        maxArrayLength: null,
+        maxStringLength: null,
+      });
+    }
+  }
+
+  console.log(`Всего найдено таблиц: ${tableCount}`);
 
   const result: CheckResult["pdf"] = {
     pageSize: checkPageSize(pages, documentRules.pageSize),

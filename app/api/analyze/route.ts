@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { analyzeSchema } from "@/lib/validation";
 import { analyzeDocuments } from "@/lib/ai";
 import { analyzePdf } from "@/lib/pdf/analyzePdf";
-import { CheckResult } from "@/app/types";
+import { CheckResult } from "@/types";
 import { DOCUMENTS } from "@/app/components/constants";
 
 export async function POST(req: Request) {
@@ -22,7 +22,6 @@ export async function POST(req: Request) {
     };
 
     const parsed = analyzeSchema.safeParse(input);
-    // console.log(parsed);
 
     if (!parsed.success) {
       return NextResponse.json({ error: "Bad request" }, { status: 400 });
@@ -49,7 +48,8 @@ export async function POST(req: Request) {
 
       results[doc.name] = {
         pdf: analysisResult,
-        ai: aiResults ?? "",
+        // ai: null,
+        ai: aiResults,
       };
 
       // console.log(
