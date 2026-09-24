@@ -11,8 +11,9 @@ export async function POST(request: NextRequest) {
   if (request.headers.get("origin") !== request.nextUrl.origin) {
     return new NextResponse("Forbidden", { status: 403 });
   }
-  const hash = process.env.APP_PASSWORD_HASH;
-  if (!hash) {
+  // Hosting dashboards may preserve the dollar escaping used in .env files.
+  const hash = process.env.APP_PASSWORD_HASH?.replace(/\\\$/g, "$");
+  if (!hash || !/^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(hash)) {
     return new NextResponse("Login is not configured", { status: 503 });
   }
   const form = await request.formData();

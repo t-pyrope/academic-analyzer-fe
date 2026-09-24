@@ -114,7 +114,7 @@ export default function MainForm() {
       noValidate
       sx={{ maxWidth: 640, width: "100%" }}
     >
-      <Stack spacing={3}>
+      <Stack spacing={4}>
         <ReferenceSelect
           {...register("rules")}
           selectedProfileId={selectedProfileId}
@@ -131,9 +131,9 @@ export default function MainForm() {
           <Paper
             variant="outlined"
             sx={{
-              borderStyle: "dashed",
+              borderStyle: "solid",
               borderColor: "divider",
-              p: 2.5,
+              p: 4,
               textAlign: "center",
             }}
           >

@@ -21,7 +21,8 @@ export const ReferenceSelect = ({
     <>
       <Stack
         direction={{ xs: "column", sm: "row" }}
-        spacing={1}
+        spacing={2}
+        sx={{ alignItems: { sm: "flex-end" } }}
         component="div"
       >
         <TextField

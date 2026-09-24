@@ -7,15 +7,25 @@ export default async function LoginPage({
 }) {
   const { error } = await searchParams;
   return (
-    <Box component="main" sx={{ maxWidth: 400, mx: "auto", mt: 10, px: 3 }}>
-      <Typography variant="h1" sx={{ mb: 3 }}>
+    <Box
+      component="main"
+      sx={{
+        width: "100%",
+        maxWidth: 520,
+        mx: "auto",
+        mt: { xs: 10, sm: 20 },
+        px: 3,
+        pb: 8,
+      }}
+    >
+      <Typography variant="h1" sx={{ mb: 6 }}>
         Přihlášení
       </Typography>
       <Box
         component="form"
         action="/api/login"
         method="post"
-        sx={{ display: "grid", gap: 2 }}
+        sx={{ display: "grid", gap: 3 }}
       >
         <TextField
           name="password"
