@@ -37,9 +37,11 @@ export default async function LoginPage({
           error={!!error}
           helperText={error ? "Nesprávné heslo." : undefined}
         />
-        <Button type="submit" variant="contained">
-          Přihlásit se
-        </Button>
+        <Box>
+          <Button type="submit" variant="contained">
+            Přihlásit se
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material";
 
-const ink = "#111111";
+const ink = "#252525";
+const inkSelected = "#454545";
 const muted = "#666666";
 const canvas = "#fafafa";
 const field = "#eeeeee";
@@ -104,20 +105,19 @@ export const theme = createTheme({
         // Primary actions echo the reference's oversized, unboxed Submit link.
         contained: {
           justifyContent: "flex-start",
-          padding: "4px 0",
-          backgroundColor: "transparent",
-          color: ink,
-          fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+          // padding: "4px 0",
+          // backgroundColor: "transparent",
+          color: "white",
           fontWeight: 600,
           lineHeight: 1.2,
           letterSpacing: "-0.045em",
           "&:hover": {
-            backgroundColor: "transparent",
-            color: muted,
+            backgroundColor: inkSelected,
+            // color: border,
             boxShadow: "none",
           },
-          "&.Mui-disabled": { backgroundColor: "transparent" },
-          "&.MuiButton-loading": { color: "transparent" },
+          "&.Mui-disabled": { backgroundColor: inkSelected },
+          // "&.MuiButton-loading": { color: "transparent" },
         },
         sizeSmall: { fontSize: "0.8125rem", padding: "6px 12px" },
       },

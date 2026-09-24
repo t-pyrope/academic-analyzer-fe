@@ -7,12 +7,7 @@ export function LogoutButton() {
   const pathname = usePathname();
   if (pathname === "/login") return null;
   return (
-    <Box
-      component="form"
-      action="/api/logout"
-      method="post"
-      sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}
-    >
+    <Box component="form" action="/api/logout" method="post">
       <Button type="submit">Odhlásit se</Button>
     </Box>
   );

@@ -112,7 +112,7 @@ export default function MainForm() {
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      sx={{ maxWidth: 640, width: "100%" }}
+      sx={{ width: "100%" }}
     >
       <Stack spacing={4}>
         <ReferenceSelect
