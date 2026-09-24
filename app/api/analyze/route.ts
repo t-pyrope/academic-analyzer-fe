@@ -6,21 +6,31 @@ import { analyzePdf } from "@/lib/pdf/analyzePdf";
 import { CheckResult } from "@/types";
 import { DOCUMENTS } from "@/app/components/constants";
 
-import { measureAnalysisRequest } from "@/lib/instrumentation/analysis";
+import {
+  logAnalysisError,
+  measureAnalysisRequest,
+  measureAnalysisStage,
+} from "@/lib/instrumentation/analysis";
 
 export async function POST(req: Request) {
   return measureAnalysisRequest(async (measureDocument) => {
     try {
       const ip = req.headers.get("x-forwarded-for") ?? "unknown";
 
-      if (!(await rateLimit(`analyze:${ip}`, 10, 60))) {
+      if (
+        !(await measureAnalysisStage("request.rate_limit", () =>
+          rateLimit(`analyze:${ip}`, 10, 60),
+        ))
+      ) {
         return NextResponse.json(
           { error: "Too many requests" },
           { status: 429 },
         );
       }
 
-      const formData = await req.formData();
+      const formData = await measureAnalysisStage("request.form_data", () =>
+        req.formData(),
+      );
       const input = {
         rules: formData.get("rules"),
         assignment: formData.get("assignment"),
@@ -47,11 +57,12 @@ export async function POST(req: Request) {
       }
       for (const doc of documents) {
         await measureDocument(async () => {
-          const analysisResult = await analyzePdf(
-            doc,
-            selectedDocument.documentRules,
+          const analysisResult = await measureAnalysisStage("pdf.analyze", () =>
+            analyzePdf(doc, selectedDocument.documentRules),
           );
-          const aiResults = await analyzeDocuments([doc], selectedDocument);
+          const aiResults = await measureAnalysisStage("ai.analyze", () =>
+            analyzeDocuments([doc], selectedDocument),
+          );
 
           results[doc.name] = {
             pdf: analysisResult,
@@ -73,13 +84,11 @@ export async function POST(req: Request) {
       }
 
       // const response = null;
-
-      // console.log("HELLOU analysis result", analysisResult);
-
       // console.log("response", response);
 
       return NextResponse.json(results);
-    } catch {
+    } catch (error) {
+      logAnalysisError("analysis.request.error", error);
       return NextResponse.json({ error: "Internal Error" }, { status: 500 });
     }
   });

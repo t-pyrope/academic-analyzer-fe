@@ -79,7 +79,7 @@ export default function MainForm() {
   };
 
   const onSubmit = async (form: FormValues) => {
-    if (form.documents.length === 0) {
+    if (form.documents.length === 0 || !form.rules) {
       return;
     }
 
@@ -126,7 +126,7 @@ export default function MainForm() {
             variant="subtitle1"
             sx={{ fontWeight: 600 }}
           >
-            Akademické práce
+            Akademické práce*
           </Typography>
           <Paper
             variant="outlined"

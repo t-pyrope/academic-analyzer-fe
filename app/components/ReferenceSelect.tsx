@@ -29,7 +29,7 @@ export const ReferenceSelect = ({
           {...props}
           select
           fullWidth
-          label="Metodické pokyny"
+          label="Metodické pokyny*"
           slotProps={{
             select: {
               native: true,

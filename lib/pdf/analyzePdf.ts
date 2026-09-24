@@ -10,6 +10,7 @@ import { checkFontSize } from "@/lib/pdf/checkFontSize";
 import { checkPageSize } from "@/lib/pdf/checkPageSize";
 
 import { extractTables } from "./extractTables";
+import { measureAnalysisStage } from "@/lib/instrumentation/analysis";
 
 const getMainFontSize = (pages: PageData[]): number | undefined => {
   const fontSizes = pages
@@ -36,28 +37,46 @@ export const analyzePdf = async (
   file: File,
   documentRules: DocumentRules,
 ): Promise<CheckResult["pdf"]> => {
-  const buffer = await file.arrayBuffer();
+  const buffer = await measureAnalysisStage("pdf.read_buffer", () =>
+    file.arrayBuffer(),
+  );
 
-  const pdf = await getDocument({
-    data: new Uint8Array(buffer),
-    standardFontDataUrl: path.join(
-      process.cwd(),
-      "node_modules/pdfjs-dist/standard_fonts/",
-    ),
-  }).promise;
+  const pdf = await measureAnalysisStage(
+    "pdf.load_document",
+    async () =>
+      getDocument({
+        data: new Uint8Array(buffer),
+        standardFontDataUrl: path.join(
+          process.cwd(),
+          "node_modules/pdfjs-dist/standard_fonts/",
+        ),
+      }).promise,
+  );
 
   const pages: PageData[] = [];
 
   for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
+    const page = await measureAnalysisStage(
+      "pdf.get_page",
+      () => pdf.getPage(i),
+      i,
+    );
 
     // console.log("PAGE: ", page);
 
     // possible bottleneck
-    await page.getOperatorList();
+    await measureAnalysisStage(
+      "pdf.get_operator_list",
+      () => page.getOperatorList(),
+      i,
+    );
 
     const viewport = page.getViewport({ scale: 1 });
-    const textContent = await page.getTextContent();
+    const textContent = await measureAnalysisStage(
+      "pdf.get_text_content",
+      () => page.getTextContent(),
+      i,
+    );
 
     const textItems = textContent.items
       .filter((item) => "str" in item && item.str.trim().length > 0)
@@ -90,28 +109,32 @@ export const analyzePdf = async (
   const mainFontSize = getMainFontSize(pages);
 
   // TODO
-  await extractTables(new Uint8Array(await file.arrayBuffer()));
+  await measureAnalysisStage("pdf.extract_tables", async () =>
+    extractTables(new Uint8Array(await file.arrayBuffer())),
+  );
 
-  const result: CheckResult["pdf"] = {
-    pageSize: checkPageSize(pages, documentRules.pageSize),
-    marginLeftMm: checkMarginLeft(
-      pages,
-      documentRules.marginLeftMm,
-      documentRules.fontSize,
-    ),
-    fontFamily: checkFont(pages, documentRules.fontFamily),
-    fontSize: checkFontSize(mainFontSize, documentRules.fontSize),
-    lineSpacing: checkLineSpacing(
-      pages,
-      documentRules.lineSpacing,
-      mainFontSize,
-    ),
-    maxFileSizeInMb: checkFileSize(file, documentRules.maxFileSizeInMb),
-  };
+  return measureAnalysisStage("pdf.check_rules", async () => {
+    const result: CheckResult["pdf"] = {
+      pageSize: checkPageSize(pages, documentRules.pageSize),
+      marginLeftMm: checkMarginLeft(
+        pages,
+        documentRules.marginLeftMm,
+        documentRules.fontSize,
+      ),
+      fontFamily: checkFont(pages, documentRules.fontFamily),
+      fontSize: checkFontSize(mainFontSize, documentRules.fontSize),
+      lineSpacing: checkLineSpacing(
+        pages,
+        documentRules.lineSpacing,
+        mainFontSize,
+      ),
+      maxFileSizeInMb: checkFileSize(file, documentRules.maxFileSizeInMb),
+    };
 
-  if (documentRules.chapterStartsNewPage) {
-    result.chapterStartsNewPage = checkChapterStartsNewPage(pages);
-  }
+    if (documentRules.chapterStartsNewPage) {
+      result.chapterStartsNewPage = checkChapterStartsNewPage(pages);
+    }
 
-  return result;
+    return result;
+  });
 };

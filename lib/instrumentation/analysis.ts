@@ -10,6 +10,52 @@ type Measurement = {
 };
 
 const context = new AsyncLocalStorage<Measurement>();
+const requestContext = new AsyncLocalStorage<string>();
+
+export function logAnalysisError(event: string, error: unknown) {
+  // Do not serialize arbitrary error fields (SDK errors may contain payloads).
+  log({
+    event,
+    requestId: requestContext.getStore(),
+    analysisId: context.getStore()?.analysisId,
+    error:
+      error instanceof Error
+        ? { name: error.name, message: error.message, stack: error.stack }
+        : { name: "UnknownError", message: "Non-Error value thrown" },
+  });
+}
+
+export async function measureAnalysisStage<T>(
+  stage: string,
+  work: () => Promise<T>,
+  pageNumber?: number,
+): Promise<T> {
+  const started = performance.now();
+  const metadata = {
+    requestId: requestContext.getStore(),
+    analysisId: context.getStore()?.analysisId,
+    stage,
+    pageNumber,
+  };
+  log({ event: "analysis.stage.start", ...metadata });
+  try {
+    const result = await work();
+    log({
+      event: "analysis.stage.end",
+      ...metadata,
+      durationMs: performance.now() - started,
+    });
+    return result;
+  } catch (error) {
+    log({
+      event: "analysis.stage.failed",
+      ...metadata,
+      durationMs: performance.now() - started,
+    });
+    logAnalysisError("analysis.error", error);
+    throw error;
+  }
+}
 
 // Only explicitly constructed metadata reaches the logger.
 function log(metadata: object) {
@@ -47,27 +93,36 @@ export async function measureAnalysisRequest(
   const started = performance.now();
   const analyses: Measurement[] = [];
   let httpStatus = 500;
-  log({ event: "analysis.request.start", requestId, requestStart });
+  log({
+    event: "analysis.request.start",
+    requestId,
+    requestStart,
+    nodeVersion: process.version,
+    platform: process.platform,
+    arch: process.arch,
+  });
   try {
-    const response = await handler(async (work) => {
-      const metrics = measurement();
-      analyses.push(metrics);
-      return context.run(metrics, async () => {
-        log({
-          event: "analysis.start",
-          requestId,
-          analysisId: metrics.analysisId,
+    const response = await requestContext.run(requestId, () =>
+      handler(async (work) => {
+        const metrics = measurement();
+        analyses.push(metrics);
+        return context.run(metrics, async () => {
+          log({
+            event: "analysis.start",
+            requestId,
+            analysisId: metrics.analysisId,
+          });
+          try {
+            const result = await work();
+            metrics.analysisSuccess = true;
+            return result;
+          } catch (error) {
+            metrics.analysisSuccess = false;
+            throw error;
+          }
         });
-        try {
-          const result = await work();
-          metrics.analysisSuccess = true;
-          return result;
-        } catch (error) {
-          metrics.analysisSuccess = false;
-          throw error;
-        }
-      });
-    });
+      }),
+    );
     httpStatus = response.status;
     return response;
   } finally {
