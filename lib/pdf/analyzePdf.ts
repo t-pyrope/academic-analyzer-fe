@@ -90,25 +90,7 @@ export const analyzePdf = async (
   const mainFontSize = getMainFontSize(pages);
 
   // TODO
-  const tablesByPage = await extractTables(
-    new Uint8Array(await file.arrayBuffer()),
-  );
-  let tableCount = 0;
-
-  for (const [pageIndex, tables] of tablesByPage.entries()) {
-    for (const [index, table] of tables.entries()) {
-      tableCount++;
-      console.log(`Страница ${pageIndex + 1}, таблица ${index + 1}:`);
-      console.table(table.rows);
-      console.dir(table, {
-        depth: null,
-        maxArrayLength: null,
-        maxStringLength: null,
-      });
-    }
-  }
-
-  console.log(`Всего найдено таблиц: ${tableCount}`);
+  await extractTables(new Uint8Array(await file.arrayBuffer()));
 
   const result: CheckResult["pdf"] = {
     pageSize: checkPageSize(pages, documentRules.pageSize),

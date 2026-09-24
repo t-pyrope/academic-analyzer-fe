@@ -1,4 +1,8 @@
 import OpenAI from "openai";
+import {
+  approximateJsonBytes,
+  measureOpenAICall,
+} from "@/lib/instrumentation/analysis";
 import { AnalysisResult, SelectedDocument } from "@/types";
 
 export const openai = new OpenAI({
@@ -42,15 +46,20 @@ ${JSON.stringify(selectedDocument.rules, null, 2)}
 
   const uploadedFiles = await Promise.all(
     documents.map(async (document) => {
-      return openai.files.create({
+      const body = {
         file: await OpenAI.toFile(await document.arrayBuffer(), document.name, {
           type: document.type,
         }),
-        purpose: "user_data",
-      });
+        purpose: "user_data" as const,
+      };
+      return measureOpenAICall(
+        "files.create",
+        document.size + Buffer.byteLength(body.purpose),
+        () => openai.files.create(body),
+      );
     }),
   );
-  const response = await openai.responses.create({
+  const body: OpenAI.Responses.ResponseCreateParamsNonStreaming = {
     model: "gpt-5.6-terra",
     reasoning: {
       effort: "medium",
@@ -130,7 +139,12 @@ ${JSON.stringify(selectedDocument.rules, null, 2)}
         },
       },
     },
-  });
+  };
+  const response = await measureOpenAICall(
+    "responses.create",
+    approximateJsonBytes(body),
+    () => openai.responses.create(body),
+  );
 
   return JSON.parse(response.output_text) as AnalysisResult;
 };
