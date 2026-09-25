@@ -53,7 +53,7 @@ export default function ResultsPage() {
             display: "flex",
             justifyContent: "space-between",
             width: "100%",
-            alignItems: "center",
+            alignItems: "flex-start",
           }}
         >
           <Typography variant="h1" component="h1">
@@ -61,7 +61,7 @@ export default function ResultsPage() {
           </Typography>
 
           <Button onClick={onStartAgainClick} variant="contained">
-            Začít znova
+            Nová analýza
           </Button>
         </Box>
 
