@@ -155,6 +155,7 @@ export async function measureOpenAICall<T>(
   call: () => { withResponse(): Promise<{ data: T; response: Response }> },
 ): Promise<T> {
   const metrics = context.getStore();
+  const requestId = requestContext.getStore();
   const callId = randomUUID();
   const callStart = new Date().toISOString();
   const started = performance.now();
@@ -167,6 +168,7 @@ export async function measureOpenAICall<T>(
   }
   log({
     event: "analysis.openai.start",
+    requestId,
     analysisId: metrics?.analysisId,
     callId,
     operation,
@@ -190,6 +192,7 @@ export async function measureOpenAICall<T>(
     if (metrics) metrics.approximateBytesReceived += approximateBytesReceived;
     log({
       event: "analysis.openai.end",
+      requestId,
       analysisId: metrics?.analysisId,
       callId,
       operation,
