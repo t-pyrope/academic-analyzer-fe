@@ -10,7 +10,7 @@ import { checkFontSize } from "@/lib/pdf/checkFontSize";
 import { checkPageSize } from "@/lib/pdf/checkPageSize";
 
 import { extractTables } from "./extractTables";
-import { measureAnalysisStage } from "@/lib/instrumentation/analysis";
+import { measureAnalysisStage, measureAnalysisSyncStage } from "@/lib/instrumentation/analysis";
 
 const getMainFontSize = (pages: PageData[]): number | undefined => {
   const fontSizes = pages
@@ -115,24 +115,31 @@ export const analyzePdf = async (
 
   return measureAnalysisStage("pdf.check_rules", async () => {
     const result: CheckResult["pdf"] = {
-      pageSize: checkPageSize(pages, documentRules.pageSize),
-      marginLeftMm: checkMarginLeft(
-        pages,
-        documentRules.marginLeftMm,
-        documentRules.fontSize,
+      pageSize: measureAnalysisSyncStage("pdf.check_rules.page_size", () =>
+        checkPageSize(pages, documentRules.pageSize),
       ),
-      fontFamily: checkFont(pages, documentRules.fontFamily),
-      fontSize: checkFontSize(mainFontSize, documentRules.fontSize),
-      lineSpacing: checkLineSpacing(
-        pages,
-        documentRules.lineSpacing,
-        mainFontSize,
+      marginLeftMm: measureAnalysisSyncStage("pdf.check_rules.margin_left", () =>
+        checkMarginLeft(pages, documentRules.marginLeftMm, documentRules.fontSize),
       ),
-      maxFileSizeInMb: checkFileSize(file, documentRules.maxFileSizeInMb),
+      fontFamily: measureAnalysisSyncStage("pdf.check_rules.font_family", () =>
+        checkFont(pages, documentRules.fontFamily),
+      ),
+      fontSize: measureAnalysisSyncStage("pdf.check_rules.font_size", () =>
+        checkFontSize(mainFontSize, documentRules.fontSize),
+      ),
+      lineSpacing: measureAnalysisSyncStage("pdf.check_rules.line_spacing", () =>
+        checkLineSpacing(pages, documentRules.lineSpacing, mainFontSize),
+      ),
+      maxFileSizeInMb: measureAnalysisSyncStage("pdf.check_rules.file_size", () =>
+        checkFileSize(file, documentRules.maxFileSizeInMb),
+      ),
     };
 
     if (documentRules.chapterStartsNewPage) {
-      result.chapterStartsNewPage = checkChapterStartsNewPage(pages);
+      result.chapterStartsNewPage = measureAnalysisSyncStage(
+        "pdf.check_rules.chapter_starts_new_page",
+        () => checkChapterStartsNewPage(pages),
+      );
     }
 
     return result;

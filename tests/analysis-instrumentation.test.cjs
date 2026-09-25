@@ -113,3 +113,26 @@ test('early returns and multiple completed documents receive request summaries',
     assert.notEqual(ends[0].analysisId, ends[1].analysisId);
   });
 });
+
+test('synchronous rule instrumentation preserves values, errors and request completion', async () => {
+  await capture(async (events) => {
+    const value = { valid: true };
+    assert.equal(instrumentation.measureAnalysisSyncStage('test.rule', () => value), value);
+    assert.deepEqual(events.map((event) => event.event), ['analysis.stage.start', 'analysis.stage.end']);
+    events.length = 0;
+    const failure = new Error('rule failed');
+    await assert.rejects(instrumentation.measureAnalysisRequest(async (measureDocument) => {
+      await measureDocument(async () => instrumentation.measureAnalysisSyncStage('test.rule', () => {
+        throw failure;
+      }));
+      return Response.json({});
+    }), (error) => error === failure);
+    const failed = events.find((event) => event.event === 'analysis.stage.failed');
+    const end = events.at(-1);
+    assert.equal(failed.stage, 'test.rule');
+    assert.equal(failed.requestId, end.requestId);
+    assert.equal(failed.analysisId, end.analysisId);
+    assert.equal(end.event, 'analysis.request.end');
+    assert.equal(end.success, false);
+  });
+});

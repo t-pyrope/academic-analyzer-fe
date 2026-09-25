@@ -65,7 +65,7 @@
       "id": "frontmatter.declaration",
       "definition": "declaration.required_content",
       "severity": "error",
-      "description": "Čestné prohlášení obsahuje prohlášení o samostatném vypracování bakalářské práce a údaj o datu"
+      "description": "Čestné prohlášení obsahuje prohlášení o samostatném vypracování bakalářské práce a údaj o datu (může být prázdné)"
     },
     {
       "id": "abstract.languages",
