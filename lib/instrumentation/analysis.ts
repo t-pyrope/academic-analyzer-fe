@@ -57,39 +57,6 @@ export async function measureAnalysisStage<T>(
   }
 }
 
-// Keep synchronous checks synchronous: no extra awaits or scheduling changes.
-export function measureAnalysisSyncStage<T>(
-  stage: string,
-  work: () => T,
-  pageNumber?: number,
-): T {
-  const started = performance.now();
-  const metadata = {
-    requestId: requestContext.getStore(),
-    analysisId: context.getStore()?.analysisId,
-    stage,
-    pageNumber,
-  };
-  log({ event: "analysis.stage.start", ...metadata });
-  try {
-    const result = work();
-    log({
-      event: "analysis.stage.end",
-      ...metadata,
-      durationMs: performance.now() - started,
-    });
-    return result;
-  } catch (error) {
-    log({
-      event: "analysis.stage.failed",
-      ...metadata,
-      durationMs: performance.now() - started,
-    });
-    logAnalysisError("analysis.error", error);
-    throw error;
-  }
-}
-
 // Only explicitly constructed metadata reaches the logger.
 function log(metadata: object) {
   try {

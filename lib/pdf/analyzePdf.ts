@@ -10,7 +10,6 @@ import { checkFontSize } from "@/lib/pdf/checkFontSize";
 import { checkPageSize } from "@/lib/pdf/checkPageSize";
 
 import { extractTables } from "./extractTables";
-import { measureAnalysisStage, measureAnalysisSyncStage } from "@/lib/instrumentation/analysis";
 
 const getMainFontSize = (pages: PageData[]): number | undefined => {
   const fontSizes = pages
@@ -37,46 +36,24 @@ export const analyzePdf = async (
   file: File,
   documentRules: DocumentRules,
 ): Promise<CheckResult["pdf"]> => {
-  const buffer = await measureAnalysisStage("pdf.read_buffer", () =>
-    file.arrayBuffer(),
-  );
+  const buffer = await file.arrayBuffer();
 
-  const pdf = await measureAnalysisStage(
-    "pdf.load_document",
-    async () =>
-      getDocument({
-        data: new Uint8Array(buffer),
-        standardFontDataUrl: path.join(
-          process.cwd(),
-          "node_modules/pdfjs-dist/standard_fonts/",
-        ),
-      }).promise,
-  );
+  const pdf = await getDocument({
+    data: new Uint8Array(buffer),
+    standardFontDataUrl: path.join(
+      process.cwd(),
+      "node_modules/pdfjs-dist/standard_fonts/",
+    ),
+  }).promise;
 
   const pages: PageData[] = [];
 
   for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await measureAnalysisStage(
-      "pdf.get_page",
-      () => pdf.getPage(i),
-      i,
-    );
-
-    // console.log("PAGE: ", page);
-
-    // possible bottleneck
-    await measureAnalysisStage(
-      "pdf.get_operator_list",
-      () => page.getOperatorList(),
-      i,
-    );
+    const page = await pdf.getPage(i);
+    await page.getOperatorList();
 
     const viewport = page.getViewport({ scale: 1 });
-    const textContent = await measureAnalysisStage(
-      "pdf.get_text_content",
-      () => page.getTextContent(),
-      i,
-    );
+    const textContent = await page.getTextContent();
 
     const textItems = textContent.items
       .filter((item) => "str" in item && item.str.trim().length > 0)
@@ -109,39 +86,28 @@ export const analyzePdf = async (
   const mainFontSize = getMainFontSize(pages);
 
   // TODO
-  await measureAnalysisStage("pdf.extract_tables", async () =>
-    extractTables(new Uint8Array(await file.arrayBuffer())),
-  );
+  await extractTables(new Uint8Array(await file.arrayBuffer()));
 
-  return measureAnalysisStage("pdf.check_rules", async () => {
-    const result: CheckResult["pdf"] = {
-      pageSize: measureAnalysisSyncStage("pdf.check_rules.page_size", () =>
-        checkPageSize(pages, documentRules.pageSize),
-      ),
-      marginLeftMm: measureAnalysisSyncStage("pdf.check_rules.margin_left", () =>
-        checkMarginLeft(pages, documentRules.marginLeftMm, documentRules.fontSize),
-      ),
-      fontFamily: measureAnalysisSyncStage("pdf.check_rules.font_family", () =>
-        checkFont(pages, documentRules.fontFamily),
-      ),
-      fontSize: measureAnalysisSyncStage("pdf.check_rules.font_size", () =>
-        checkFontSize(mainFontSize, documentRules.fontSize),
-      ),
-      lineSpacing: measureAnalysisSyncStage("pdf.check_rules.line_spacing", () =>
-        checkLineSpacing(pages, documentRules.lineSpacing, mainFontSize),
-      ),
-      maxFileSizeInMb: measureAnalysisSyncStage("pdf.check_rules.file_size", () =>
-        checkFileSize(file, documentRules.maxFileSizeInMb),
-      ),
-    };
+  const result: CheckResult["pdf"] = {
+    pageSize: checkPageSize(pages, documentRules.pageSize),
+    marginLeftMm: checkMarginLeft(
+      pages,
+      documentRules.marginLeftMm,
+      documentRules.fontSize,
+    ),
+    fontFamily: checkFont(pages, documentRules.fontFamily),
+    fontSize: checkFontSize(mainFontSize, documentRules.fontSize),
+    lineSpacing: checkLineSpacing(
+      pages,
+      documentRules.lineSpacing,
+      mainFontSize,
+    ),
+    maxFileSizeInMb: checkFileSize(file, documentRules.maxFileSizeInMb),
+  };
 
-    if (documentRules.chapterStartsNewPage) {
-      result.chapterStartsNewPage = measureAnalysisSyncStage(
-        "pdf.check_rules.chapter_starts_new_page",
-        () => checkChapterStartsNewPage(pages),
-      );
-    }
+  if (documentRules.chapterStartsNewPage) {
+    result.chapterStartsNewPage = checkChapterStartsNewPage(pages);
+  }
 
-    return result;
-  });
+  return result;
 };
