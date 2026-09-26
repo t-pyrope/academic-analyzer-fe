@@ -36,8 +36,6 @@ export const ReferenceSelect = ({
             },
           }}
         >
-          <option value="" />
-
           {options.map(({ label, value }) => (
             <option value={value} key={value}>
               {label}
