@@ -61,7 +61,7 @@ export async function POST(req: Request) {
             analyzePdf(doc, selectedDocument.documentRules),
           );
           const aiResults = await measureAnalysisStage("ai.analyze", () =>
-            analyzeDocuments([doc], selectedDocument),
+            analyzeDocuments([doc], selectedDocument, assignment),
           );
 
           results[doc.name] = {

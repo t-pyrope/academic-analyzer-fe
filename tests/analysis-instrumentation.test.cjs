@@ -113,3 +113,46 @@ test('early returns and multiple completed documents receive request summaries',
     assert.notEqual(ends[0].analysisId, ends[1].analysisId);
   });
 });
+
+test('assignment reaches the AI request and API rejects oversized assignments', async () => {
+  const constants = loadTs('lib/constants.ts');
+  const validation = loadTs('lib/validation.ts', { '@/lib/constants': constants });
+  const result = { violations: [], impossibleToDetermine: [], summary: 'ok', questions: [] };
+  const requests = [];
+  openai.fetch = async (url, options) => {
+    if (String(url) === 'data:,') return new Response('');
+    if (String(url).endsWith('/files')) return Response.json({ id: 'file-test' });
+    requests.push(JSON.parse(options.body));
+    return Response.json({ id: 'resp-test', object: 'response', output: [
+      { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(result), annotations: [] }] },
+    ] });
+  };
+  const { POST } = loadTs('app/api/analyze/route.ts', {
+    '@/lib/rate-limit': { rateLimit: async () => true },
+    '@/lib/validation': validation,
+    '@/lib/ai': { analyzeDocuments },
+    '@/lib/pdf/analyzePdf': { analyzePdf: async () => ({}) },
+    '@/app/components/constants': { DOCUMENTS: [{ profile_id: 'test', rules: [], documentRules: [] }] },
+    '@/lib/instrumentation/analysis': instrumentation,
+  });
+  await capture(async () => {
+    for (const assignment of ['Cílem práce je vytvořit aplikaci.\nPorovnej výsledky.', '', 'a'.repeat(constants.MAX_ASSIGNMENT_LENGTH), 'a'.repeat(constants.MAX_ASSIGNMENT_LENGTH + 1)]) {
+      const form = new FormData();
+      form.set('rules', 'test');
+      form.set('assignment', assignment);
+      form.append('documents', new File(['document'], 'work.pdf', { type: 'application/pdf' }));
+      const before = requests.length;
+      const response = await POST(new Request('http://localhost/api/analyze', { method: 'POST', body: form }));
+      if (assignment.length > constants.MAX_ASSIGNMENT_LENGTH) {
+        assert.equal(response.status, 400);
+        assert.equal(requests.length, before);
+      } else {
+        assert.equal(response.status, 200);
+        const content = requests.at(-1).input[0].content;
+        const assignmentParts = content.filter((part) => part.type === 'input_text' && part.text.startsWith('Задание работы:'));
+        assert.deepEqual(assignmentParts, assignment ? [{ type: 'input_text', text: `Задание работы:\n${assignment}` }] : []);
+        assert.ok(content.some((part) => part.type === 'input_file'));
+      }
+    }
+  });
+});

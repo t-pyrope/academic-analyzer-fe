@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_ASSIGNMENT_LENGTH } from "@/lib/constants";
 
 export const analyzeSchema = z.object({
   rules: z.string(),
@@ -16,5 +17,8 @@ export const analyzeSchema = z.object({
         },
       ),
   ),
-  assignment: z.string(),
+  assignment: z
+    .string()
+    .transform((value) => value.replace(/\r\n/g, "\n"))
+    .pipe(z.string().max(MAX_ASSIGNMENT_LENGTH)),
 });

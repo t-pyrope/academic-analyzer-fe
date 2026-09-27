@@ -19,6 +19,7 @@ import {
 } from "@/app/constants";
 import { useRouter } from "next/navigation";
 import { setStateFromLocalStorage } from "@/app/utils";
+import { MAX_ASSIGNMENT_LENGTH } from "@/lib/constants";
 
 const MAX_DOCUMENTS = 30;
 const ACCEPTED_DOCUMENT_TYPES =
@@ -30,7 +31,7 @@ export default function MainForm() {
     setValue,
     watch,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<FormValues>({
     defaultValues: {
       rules: pefBp.profile_id,
@@ -41,6 +42,7 @@ export default function MainForm() {
   const router = useRouter();
 
   const documents = watch("documents");
+  const assignment = watch("assignment");
   const selectedProfileId = watch("rules");
 
   useEffect(() => {
@@ -196,7 +198,18 @@ export default function MainForm() {
         </Stack>
 
         <TextField
-          {...register("assignment")}
+          {...register("assignment", {
+            maxLength: {
+              value: MAX_ASSIGNMENT_LENGTH,
+              message: `Zadání může obsahovat maximálně ${MAX_ASSIGNMENT_LENGTH} znaků.`,
+            },
+          })}
+          slotProps={{ htmlInput: { maxLength: MAX_ASSIGNMENT_LENGTH } }}
+          error={!!errors.assignment}
+          helperText={
+            errors.assignment?.message ??
+            `${assignment.length} / ${MAX_ASSIGNMENT_LENGTH} znaků`
+          }
           fullWidth
           multiline
           minRows={5}
