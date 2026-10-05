@@ -1,5 +1,6 @@
 import { rateLimit } from "@/lib/rate-limit";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { isValidSession, SESSION_COOKIE } from "@/lib/session";
 import { analyzeSchema } from "@/lib/validation";
 import { analyzeDocuments } from "@/lib/ai";
 import { analyzePdf } from "@/lib/pdf/analyzePdf";
@@ -12,9 +13,16 @@ import {
   measureAnalysisStage,
 } from "@/lib/instrumentation/analysis";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   return measureAnalysisRequest(async (measureDocument) => {
     try {
+      if (!isValidSession(req.cookies.get(SESSION_COOKIE)?.value)) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401, headers: { "Cache-Control": "no-store" } },
+        );
+      }
+
       const ip = req.headers.get("x-forwarded-for") ?? "unknown";
 
       if (
@@ -70,21 +78,7 @@ export async function POST(req: Request) {
             ai: aiResults,
           };
         });
-
-        // console.log(
-        //   JSON.stringify(
-        //     Object.fromEntries(
-        //       Object.entries(analysisResult).filter(([, v]) => {
-        //         // console.log("HELLOU v", v);
-        //         return !v?.valid;
-        //       }),
-        //     ),
-        //   ),
-        // );
       }
-
-      // const response = null;
-      // console.log("response", response);
 
       return NextResponse.json(results);
     } catch (error) {
