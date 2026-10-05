@@ -1,8 +1,9 @@
 "use client";
 
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Box,
+  Alert,
   Button,
   Paper,
   Stack,
@@ -26,6 +27,7 @@ const ACCEPTED_DOCUMENT_TYPES =
   ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 export default function MainForm() {
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const {
     register,
     setValue,
@@ -81,6 +83,7 @@ export default function MainForm() {
   };
 
   const onSubmit = async (form: FormValues) => {
+    setSubmitError(null);
     if (form.documents.length === 0 || !form.rules) {
       return;
     }
@@ -94,19 +97,33 @@ export default function MainForm() {
       body.append("documents", file);
     });
 
-    const response = await fetch("/api/analyze", {
-      method: "POST",
-      body,
-    });
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        body,
+      });
 
-    const resBody = await response.json();
+      if (response.status === 401) {
+        router.replace("/login");
+        return;
+      }
+      if (!response.ok) {
+        setSubmitError(
+          `Analýza selhala (HTTP ${response.status}). Zkuste to prosím znovu.`,
+        );
+        return;
+      }
+      const resBody = await response.json();
 
-    localStorage.setItem(LOCAL_STORAGE_RESULTS_KEY, JSON.stringify(resBody));
-    localStorage.setItem(
-      LOCAL_STORAGE_DOCUMENT_ID_KEY,
-      JSON.stringify(form.rules),
-    );
-    router.push("/results");
+      localStorage.setItem(LOCAL_STORAGE_RESULTS_KEY, JSON.stringify(resBody));
+      localStorage.setItem(
+        LOCAL_STORAGE_DOCUMENT_ID_KEY,
+        JSON.stringify(form.rules),
+      );
+      router.push("/results");
+    } catch {
+      setSubmitError("Backend není dostupný. Zkuste to prosím znovu.");
+    }
   };
 
   return (
@@ -117,6 +134,7 @@ export default function MainForm() {
       sx={{ width: "100%" }}
     >
       <Stack spacing={4}>
+        {submitError && <Alert severity="error">{submitError}</Alert>}
         <ReferenceSelect
           {...register("rules")}
           selectedProfileId={selectedProfileId}

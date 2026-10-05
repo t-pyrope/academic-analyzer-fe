@@ -1,5 +1,7 @@
 import { compare } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
+import { getBackend } from "@/lib/backend/config";
+import { remoteLogin } from "@/lib/backend/remote";
 import {
   createSession,
   SESSION_COOKIE,
@@ -11,6 +13,7 @@ export async function POST(request: NextRequest) {
   if (request.headers.get("origin") !== request.nextUrl.origin) {
     return new NextResponse("Forbidden", { status: 403 });
   }
+  if (getBackend().mode !== "serverless") return remoteLogin(request);
   // Hosting dashboards may preserve the dollar escaping used in .env files.
   const hash = process.env.APP_PASSWORD_HASH?.replace(/\\\$/g, "$");
   if (!hash || !/^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(hash)) {

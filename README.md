@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Academic analyzer frontend
 
-## Getting Started
+Run `npm ci` and `npm run dev`, then open http://localhost:3000.
 
-First, run the development server:
+## Backend selection
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Set server-side variables in `.env` or the frontend hosting dashboard. Restart the
+frontend after changing them. See `.env.example` for a template without secrets.
+
+| BACKEND_MODE           | Backend                | Configuration                                                                                                        |
+| ---------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `serverless` (default) | Local Next.js analysis | OPENAI_API_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, APP_PASSWORD_HASH, SESSION_SECRET (32+ characters) |
+| `traditional`          | External Koa backend   | TRADITIONAL_BACKEND_URL                                                                                              |
+| `event-driven`         | Future backend         | EVENT_DRIVEN_BACKEND_URL                                                                                             |
+
+```dotenv
+BACKEND_MODE=traditional
+TRADITIONAL_BACKEND_URL=https://academic-analyzer-be-traditional.onrender.com
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+URLs must be HTTP(S) origins without paths, credentials, queries or fragments.
+Invalid modes and missing URLs fail explicitly. No NEXT_PUBLIC_ variables are needed.
+The local PDF/AI implementation is loaded only in serverless mode.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## External API contract
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Browser requests use `/api/login`, `/api/analyze`, `/api/logout`. Next.js proxies
+login and analysis to the selected backend. `POST /login` receives JSON
+`{ "password": "..." }` and must return success with a `__Host-app-session` cookie
+(traditional returns 204), or 401 for a wrong password. FE stores the token in a
+separate Secure, HttpOnly cookie per mode and forwards it to `POST /analyze`.
 
-## Learn More
+Analysis receives multipart `rules` (profile ID), `assignment` and repeated
+`documents`. Successful JSON is `{ "filename.pdf": { "pdf": {...}, "ai": {...} } }`.
+Backend statuses/bodies are preserved; connection failures return 502. A 401 sends
+the user to login; failed analyses are not saved as results.
 
-To learn more about Next.js, take a look at the following resources:
+The backend validates its own session signature. The external page guard checks
+cookie presence only. Logout clears the FE cookie; traditional has no revocation
+endpoint, so the issued token expires according to its backend lifetime.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Event-driven currently reserves the same API contract. Its processing is not
+implemented. If it introduces job IDs, polling or events, update the adapter/UI
+for that protocol before enabling it.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Render and measurements
 
-## Deploy on Vercel
+Use the actual Render service URL. Backend secrets stay on Render and do not
+need to be copied to FE. Check `/health` without running paid analysis.
+Server-to-server requests do not require browser CORS or third-party cookies.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The proxy adds a browser → FE → BE hop and buffers uploads in FE. Account for
+frontend hosting upload, memory and request-duration limits when comparing
+architectures. Backend rate limiting sees the FE outbound IP; browser IP headers
+are not forwarded. Render cold starts can also delay requests.
